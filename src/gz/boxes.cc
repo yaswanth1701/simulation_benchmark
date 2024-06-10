@@ -28,6 +28,7 @@
 #include "gz/sim/components/Link.hh"
 #include "gz/sim/components/Pose.hh"
 using namespace gz;
+using namespace sim;
 using namespace benchmark;
 
 BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
@@ -36,13 +37,21 @@ BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
     sdf::root root;
     root.Load(common::joinPaths(PROJECT_SOURCE_PATH,
       "test", "worlds", "shapes.sdf"));
+    
+    std::string link_name= "link";
 
     ASSERT_EQ(1u, root.WorldCount());
 
+    ServerConfig serverConfig;
+    serverConfig.SetPhysicsEngine(_physicsEngine);
     auto systemLoader = std::make_shared<SystemLoader>();
-    SimulationRunner runner(root.WorldByIndex(0), systemLoader);
+    SimulationRunner runner(root.WorldByIndex(0), systemLoader, serverConfig);
+    EXPECT_TRUE(runner.Paused());
+
+    runner.SetStepSize(_dt);
 
     int worldCount = 0;
+    bool logOnce = true;
 
     runner.EntityCompMgr().Each<World,components::Name>(
                                 [&](const Entity &_entity,
@@ -62,14 +71,67 @@ BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
 
     EXPECT_NE(kNullEntity, worldEntity);
     EXPECT_EQ(worldCount, 1);
-
-
-
-
-
+    EXPECT_EQ(_modelCount, WorldEntity->ModelCount);
 
     
+    std::vector<Link> linkEntites;
+    modelEntites.reserve(_modelCount);
+    uint64_t linkCount = 1; // link per model
+    auto ecm = runner.EntityCompMgr();
 
+    ecm.Each<Model, ParentEntity>(
+           [&](const Entity &_entity,
+               const Model *_model,
+               const ParentEntity *_parent,)->bool
+    { 
+      EXPECT_NE(kNullEntity, _entity);
+      EXPECT_NE(nullptr, _model);
+      EXPECT_NE(nullprt, _parent);
+      EXPECT_NE(worldEntity, _parent->data();
+      EXPECT_NE(linkCount, model->LinkCount());
+
+      Entity linkEntity = model->(ecm, link_name); 
+      EXPECT_NE(kNullEntity)
+      linkEntites.push_back(Link(linkEntity));
+    }
+
+    // link properties check
+    for(auto link: linkEntites)
+    {
+      // world linear velocity of link check
+      ASSERT_EQ(v0, link.WorldLinearVelocity(ecm));
+      // world angular velocity of link check
+      ASSERT_EQ(w0, link.WorldAngularVelcity(ecm));
+      // inertia of link in body frame
+      auto worldInertial = link.WorldInertial()
+      ASSERT(Moi, worldInertial->MassMatrix.Moi);
+    }
+    // resume simulation
+    runner.SetPaused(false);
+    t0 = runner.CurrentInfo().simtime;
+    simDuration = 10;
+    steps = ceil(simDuration/_dt);
+    // simulation loop
+    for(int i = 0; i<steps, i++){
+      
+      runner.step(runner.CurrentInfo);
+      double t = std::chrono::duration<double>(
+                                runner.CurrentInfo.simtime - t0).count();
+  
+      for(auto link = linkEntites.begin(); link < linkEntites.end(); link++)
+      {
+       math::Pose3d pose = link.WorldInertialPose(); 
+       math::Vector3d = link.WorldLinearVelocity();
+       math::Vector3d = link.WorldAngularVelocity();
+  
+       if(logOnce)
+        break;
+      } 
+  }
+  double simTime = std::chrono::duration<double>(runner.CurrentInfo.simtime - t0).count();
+  ASSERT_NEAR(simDuration, simTime, 1.1*_dt);
+  runner.SetPaused(true);
+  
                  
 
 }
