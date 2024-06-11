@@ -34,15 +34,22 @@ using namespace gz;
 using namespace sim;
 using namespace benchmark;
 
+void logModelStates(benchmark_proto::Boxes_msg &boxes_msg, math::Vector3d &linearVelocity,
+                    math::Vector3d &angularVelocity, math::Pose3d & pose)
+{
+    
+}
+
 BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
-                 int _modelCount, bool _collision, bool _complex){
+                 int _modelCount, bool _collision, bool _complex)
+{
       // Entry point to simulation
     sdf::root root;
 
     // World creation based on test parameters using boxes.world.erb file.
     std::string sdfRubyPath = common::joinPaths(PROJECT_SOURCE_PATH, "worlds", 
                                                 "boxes", "boxes.worl.erb");
-    std::chrono::duration_cast<std::chrono::duration<double>>(duration).count()
+
     std::stringstream worldFileName;
     worldFieName << "boxes" << "_collision" << _collision << "_complex"
                  << _complex << "_dt" << std::setprecision(2) << std::scientific
@@ -113,6 +120,7 @@ BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
 
     // link per model
     uint64_t linkCount = 1; 
+    bool addLink = true;
     auto ecm = runner.EntityCompMgr();
 
     ecm.Each<Model, ParentEntity>(
@@ -127,8 +135,12 @@ BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
       EXPECT_NE(linkCount, model->LinkCount());
 
       Entity linkEntity = model->(ecm, link_name); 
-      EXPECT_NE(kNullEntity)
+      EXPECT_NE(kNullEntity, linkEntity);
+      if(logMultiple || addLink)
+      {
       linkEntites.push_back(Link(linkEntity));
+      addLink = false;
+      }
       return true;
     }
 
@@ -161,15 +173,15 @@ BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
        math::Pose3d pose = link.WorldInertialPose(); 
        math::Vector3d = link.WorldLinearVelocity();
        math::Vector3d = link.WorldAngularVelocity();
-  
-       if(!logMultiple)
-        break;
       } 
   }
 
   auto simTimeMili = runner.CurrentInfo.simtime - t0;
-  double simTime = std::chrono::duration_cast<std::chrono::duration<double>>(simTimeMili).count();
+  double simTime = std::chrono::duration_cast<std::chrono::duration<double>>(
+                                                         simTimeMili).count();
+
   ASSERT_NEAR(simDuration, simTime, 1.1*_dt);
+  // pause the simulation runner
   runner.SetPaused(true);
   
 }
