@@ -35,8 +35,10 @@ BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
                  int _modelCount, bool _collision, bool _complex){
 
     sdf::root root;
-    root.Load(common::joinPaths(PROJECT_SOURCE_PATH,
-      "test", "worlds", "shapes.sdf"));
+    std::string rubySdfPath = common::joinPaths(PROJECT_SOURCE_PATH, "worlds", "boxes", "boxes.worl.erb");
+    sdf::string sdfPath = common::joinPaths(PROJECT_SOURCE_PATH, "worlds", "boxes", "boxes.worl")
+
+    root.Load(common::joinPaths(PROJECT_SOURCE_PATH, "worlds", "shapes.sdf"));
     
     std::string link_name= "link";
 
@@ -46,6 +48,8 @@ BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
     serverConfig.SetPhysicsEngine(_physicsEngine);
     auto systemLoader = std::make_shared<SystemLoader>();
     SimulationRunner runner(root.WorldByIndex(0), systemLoader, serverConfig);
+
+    EXPECT_EQ(runner.serverConfig.PhysicsEngine(), _physicsEngine)
     EXPECT_TRUE(runner.Paused());
 
     runner.SetStepSize(_dt);
@@ -103,7 +107,7 @@ BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
       // world angular velocity of link check
       ASSERT_EQ(w0, link.WorldAngularVelcity(ecm));
       // inertia of link in body frame
-      auto worldInertial = link.WorldInertial()
+      auto worldInertial = link.WorldInertial();
       ASSERT(Moi, worldInertial->MassMatrix.Moi);
     }
     // resume simulation
