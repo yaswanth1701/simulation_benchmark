@@ -71,14 +71,16 @@ BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
     auto systemLoader = std::make_shared<SystemLoader>();
     SimulationRunner runner(root.WorldByIndex(0), systemLoader, serverConfig);
 
-    EXPECT_EQ(runner.serverConfig.PhysicsEngine(), _physicsEngine)
+    // Check for correct physic engine.
+    EXPECT_EQ(runner.serverConfig.PhysicsEngine(), _physicsEngine);
     EXPECT_TRUE(runner.Paused());
 
     runner.SetStepSize(_dt);
 
     int worldCount = 0;
-    bool logOnce = true;
-
+    bool logMultiple = false;
+    
+    // Check for world parameters
     runner.EntityCompMgr().Each<World,components::Name>(
                                 [&](const Entity &_entity,
                                  const World *_world,
@@ -98,7 +100,6 @@ BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
     EXPECT_NE(kNullEntity, worldEntity);
     EXPECT_EQ(worldCount, 1);
     EXPECT_EQ(_modelCount, WorldEntity->ModelCount);
-
     
     std::vector<Link> linkEntites;
     modelEntites.reserve(_modelCount);
@@ -134,6 +135,7 @@ BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
       auto worldInertial = link.WorldInertial();
       ASSERT(Moi, worldInertial->MassMatrix.Moi);
     }
+
     // resume simulation
     runner.SetPaused(false);
     t0 = runner.CurrentInfo().simtime;
@@ -152,11 +154,12 @@ BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
        math::Vector3d = link.WorldLinearVelocity();
        math::Vector3d = link.WorldAngularVelocity();
   
-       if(logOnce)
+       if(!logMultiple)
         break;
       } 
   }
-  double simTime = std::chrono::duration<double>(runner.CurrentInfo.simtime - t0).count();
+  auto simTimeMili = runner.CurrentInfo.simtime - t0;
+  double simTime = std::chrono::duration_cast<std::chrono::duration<double>>(simTimeMili).count();
   ASSERT_NEAR(simDuration, simTime, 1.1*_dt);
   runner.SetPaused(true);
   
