@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Open Source Robotics Foundation
+ * Copyright (C) 2024 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,38 +36,44 @@ using namespace benchmark;
 
 BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
                  int _modelCount, bool _collision, bool _complex){
-
+      // Entry point to simulation
     sdf::root root;
+
     // World creation based on test parameters using boxes.world.erb file.
     std::string sdfRubyPath = common::joinPaths(PROJECT_SOURCE_PATH, "worlds", 
                                                 "boxes", "boxes.worl.erb");
-
+    std::chrono::duration_cast<std::chrono::duration<double>>(duration).count()
     std::stringstream worldFileName;
     worldFieName << "boxes" << "_collision" << _collision << "_complex"
                  << _complex << "_dt" << std::setprecision(2) << std::scientific
                  << _dt << "_modelCount" << _modelCount << ".world";
-
+    // Final world sdf path
     std::string sdfPath = common::joinPaths(PROJECT_SOURCE_PATH, "worlds", "boxes",
                                             RESULT_FOLDER, worldFileName.str());
 
+    // boxes.world.erb to .world conversion command
     std::stringstream command;
     command << "erb" << " collision=" << _collision << " complex=" << _complex
             << " dt=" << _dt << " modelCount=" << _modelCount << " " << sdfRubyPath 
             << " > " << " " << sdfPath;
 
     std::cout << sdfRubyPath << " " << sdfPath << " " << command.str() << std::endl;
-   
+
+    // execute command
     auto commandCheck =  system(comamnd.str());
     ASSERT_EQ(command, 0);
 
     root.Load(sdfPath);
     
+    // Link name in model
     std::string link_name= "box_link";
 
     ASSERT_EQ(1u, root.WorldCount());
-
+    
+    // Server config to set physic engine (DART, Bullet, BulletFeatherstone)
     ServerConfig serverConfig;
     serverConfig.SetPhysicsEngine(_physicsEngine);
+
     auto systemLoader = std::make_shared<SystemLoader>();
     SimulationRunner runner(root.WorldByIndex(0), systemLoader, serverConfig);
 
@@ -88,10 +94,11 @@ BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
     {
       EXPECT_NE(nullptr, _world);
       EXPECT_NE(nullptr, _name);
-
       EXPECT_EQ("default", _name->Data());
 
       worldCount++;
+
+      EXPECT_EQ(_modelCount, _world->ModelCount());
 
       worldEntity = _entity;
       return true;
@@ -99,7 +106,7 @@ BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
 
     EXPECT_NE(kNullEntity, worldEntity);
     EXPECT_EQ(worldCount, 1);
-    EXPECT_EQ(_modelCount, WorldEntity->ModelCount);
+    
     
     std::vector<Link> linkEntites;
     modelEntites.reserve(_modelCount);
@@ -122,6 +129,7 @@ BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
       Entity linkEntity = model->(ecm, link_name); 
       EXPECT_NE(kNullEntity)
       linkEntites.push_back(Link(linkEntity));
+      return true;
     }
 
     // link properties check
@@ -158,6 +166,7 @@ BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
         break;
       } 
   }
+
   auto simTimeMili = runner.CurrentInfo.simtime - t0;
   double simTime = std::chrono::duration_cast<std::chrono::duration<double>>(simTimeMili).count();
   ASSERT_NEAR(simDuration, simTime, 1.1*_dt);

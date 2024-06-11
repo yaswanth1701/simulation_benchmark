@@ -4,6 +4,6 @@
 
 namespace benchmakr{
     class log{
-    // have to add member functions and attributes
+    
     }
 }
