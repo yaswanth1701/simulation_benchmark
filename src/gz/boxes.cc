@@ -15,7 +15,10 @@
  *
 */
 #include <iostream> 
+#include <iomanip>
+#include <sstream>
 #include <vector>
+
 #include <gz/math/Vector3.hh>
 #include <gz/math/Pose3.hh>
 #include <gz/math/Quaternion.hh>
@@ -35,12 +38,31 @@ BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
                  int _modelCount, bool _collision, bool _complex){
 
     sdf::root root;
-    std::string rubySdfPath = common::joinPaths(PROJECT_SOURCE_PATH, "worlds", "boxes", "boxes.worl.erb");
-    sdf::string sdfPath = common::joinPaths(PROJECT_SOURCE_PATH, "worlds", "boxes", "boxes.worl")
+    // World creation based on test parameters using boxes.world.erb file.
+    std::string sdfRubyPath = common::joinPaths(PROJECT_SOURCE_PATH, "worlds", 
+                                                "boxes", "boxes.worl.erb");
 
-    root.Load(common::joinPaths(PROJECT_SOURCE_PATH, "worlds", "shapes.sdf"));
+    std::stringstream worldFileName;
+    worldFieName << "boxes" << "_collision" << _collision << "_complex"
+                 << _complex << "_dt" << std::setprecision(2) << std::scientific
+                 << _dt << "_modelCount" << _modelCount << ".world";
+
+    std::string sdfPath = common::joinPaths(PROJECT_SOURCE_PATH, "worlds", "boxes",
+                                            RESULT_FOLDER, worldFileName.str());
+
+    std::stringstream command;
+    command << "erb" << " collision=" << _collision << " complex=" << _complex
+            << " dt=" << _dt << " modelCount=" << _modelCount << " " << sdfRubyPath 
+            << " > " << " " << sdfPath;
+
+    std::cout << sdfRubyPath << " " << sdfPath << " " << command.str() << std::endl;
+   
+    auto commandCheck =  system(comamnd.str());
+    ASSERT_EQ(command, 0);
+
+    root.Load(sdfPath);
     
-    std::string link_name= "link";
+    std::string link_name= "box_link";
 
     ASSERT_EQ(1u, root.WorldCount());
 
@@ -80,7 +102,9 @@ BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
     
     std::vector<Link> linkEntites;
     modelEntites.reserve(_modelCount);
-    uint64_t linkCount = 1; // link per model
+
+    // link per model
+    uint64_t linkCount = 1; 
     auto ecm = runner.EntityCompMgr();
 
     ecm.Each<Model, ParentEntity>(
@@ -120,7 +144,7 @@ BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
       
       runner.step(runner.CurrentInfo);
       double t = std::chrono::duration<double>(
-                                runner.CurrentInfo.simtime - t0).count();
+                              runner.CurrentInfo.simtime - t0).count();
   
       for(auto link = linkEntites.begin(); link < linkEntites.end(); link++)
       {
@@ -136,7 +160,5 @@ BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
   ASSERT_NEAR(simDuration, simTime, 1.1*_dt);
   runner.SetPaused(true);
   
-                 
-
 }
 
