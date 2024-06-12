@@ -1,50 +1,13 @@
 <?xml version="1.0" ?>
 
-<%
-  # Boxes benchmark example world
-  # SI units (length in meters)
-
-  # default values
-  unless defined?(modelCount)
-    modelCount = 1  
-  end
-
-  unless defined?(collision)
-    collision = 1
-  end
-
-  unless defined?(dt)
-    dt = 0.001
-  end
-
-  unless defined?(complex)
-    complex = 0
-  end
-
-  boxes = modelCount.to_i
-
-  # Geometry
-  dx   = 0.1
-  dy   = 0.4
-  dz   = 0.9
-
-  if complex.to_i == 0
-    v0 = [-0.9, 0.4, 0.1]
-    w0 = [0.5, 0.0, 0.0]
-    gravity = [0, 0, 0]
-  else
-    v0 = [-2.0, 2.0, 8.0]
-    w0 = [0.1, 5.0, 0.1]
-    gravity = [0, 0, -9.80]
-  end
-%>
+ <!-- example box world -->
 <sdf version="1.6">
   <world name="default">
 
-    <gravity><%= gravity.join(" ") %></gravity>
+    <gravity>0 0 0</gravity>
 
     <physics type="ignored">
-      <max_step_size><%= dt.to_f %></max_step_size>
+      <max_step_size>0.001</max_step_size>
     </physics>
 
     <plugin
@@ -71,13 +34,9 @@
       <direction>-0.5 0.1 -0.9</direction>
     </light>
 
-<%
-  boxes.times do |i|
-    name = "box_" + i.to_s
-    y0 = dz * 2 * i
-%>
-    <model name="<%= name %>">
-      <pose>0 <%= y0 %> 0  0 0 0</pose>
+
+    <model name="box_0">
+      <pose>0 0.0 0  0 0 0</pose>
       <link name="box_link">
       <inertial>
         <mass>10</mass>
@@ -90,7 +49,7 @@
           <iyz>0</iyz>
         </inertia>
       </inertial>
-      <% if collision.to_i == 1 %>
+      
         <collision name="box_collision">
         <geometry>
           <box>
@@ -98,7 +57,7 @@
           </box>
         </geometry>
         </collision>
-      <% end %>
+      
       <visual name="box_visual">
           <geometry>
             <box>
@@ -117,14 +76,12 @@
       name="gz::sim::systems::SetModelState">
         <model_state>
           <link_state name="box_link">
-            <linear_velocity><%= v0.join(" ") %></linear_velocity>
-            <angular_velocity><%= w0.join(" ") %></angular_velocity>
+            <linear_velocity>-0.9 0.4 0.1</linear_velocity>
+            <angular_velocity>0.5 0.0 0.0</angular_velocity>
           </link_state>
         </model_state>
      </plugin>
     </model>
-<%
-  end
-%>
+
   </world>
 </sdf>

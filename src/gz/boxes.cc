@@ -34,7 +34,7 @@ using namespace gz;
 using namespace sim;
 using namespace benchmark;
 
-void logModelStates(benchmark_proto::Boxes_msg &boxes_msg, math::Vector3d &linearVelocity,
+void logModelStates(benchmark_proto::Box_msg &boxMsg, math::Vector3d &linearVelocity,
                     math::Vector3d &angularVelocity, math::Pose3d & pose)
 {
     
@@ -167,9 +167,10 @@ BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
       runner.step(runner.CurrentInfo);
       double t = std::chrono::duration<double>(
                               runner.CurrentInfo.simtime - t0).count();
-  
-      for(auto link = linkEntites.begin(); link < linkEntites.end(); link++)
+      // get link states
+      for(int i = 0; i < linkEntites.size(); i++)
       {
+       auto link = linkEntites[i];
        math::Pose3d pose = link.WorldInertialPose(); 
        math::Vector3d = link.WorldLinearVelocity();
        math::Vector3d = link.WorldAngularVelocity();
