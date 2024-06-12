@@ -25,6 +25,7 @@
 #include <sdf/Root.hh>
 
 #include "boxes.hh"
+#include <boxes_msg.pb.h>
 #include "gz/sim/Util.hh"
 #include "gz/sim/components/World.hh"
 #include "gz/sim/components/Model.hh"
@@ -187,3 +188,15 @@ BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
   
 }
 
+/////////////////////////////////////////////////
+TEST_P(BoxesTest, Boxes) {
+  std::string physicsEngine = std::tr1::get<0>(GetParam());
+  double dt = std::tr1::get<1>(GetParam());
+  int modelCount = std::tr1::get<2>(GetParam());
+  bool collision = std::tr1::get<3>(GetParam());
+  bool isComplex = std::tr1::get<4>(GetParam());
+  gzdbg << physicsEngine << ", dt: " << dt << ", modelCount: " << modelCount
+        << ", collision: " << collision << ", isComplex: " << isComplex
+        << std::endl;
+  Boxes(physicsEngine, dt, modelCount, collision, isComplex);
+}

@@ -42,7 +42,7 @@ message Quaternion {
   }
   
 
-message Boxes_msg {
+message BoxesMsg {
     // name of physics engine
     string physics_engine = 1;
     
@@ -58,7 +58,7 @@ message Boxes_msg {
     //  number of models 
     int32 model_count = 5;
 
-    message Box_msg{
+    message BoxMsg{
     // model number 
     int32 model_no = 1;
     // model pose in world frame
