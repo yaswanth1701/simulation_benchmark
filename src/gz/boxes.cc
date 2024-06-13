@@ -35,12 +35,6 @@ using namespace gz;
 using namespace sim;
 using namespace benchmark;
 
-void logModelStates(benchmark_proto::Box_msg &boxMsg, math::Vector3d &linearVelocity,
-                    math::Vector3d &angularVelocity, math::Pose3d & pose)
-{
-    
-}
-
 BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
                  int _modelCount, bool _collision, bool _complex)
 {
