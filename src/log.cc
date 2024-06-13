@@ -70,7 +70,7 @@ void log::recordPose(int &_modelIdx, const std::vector<double> _position,
 
 /////////////////////////////////////////////////
 void Log::recordPose(int _modelNo, const math::Pose3d &_pose)
- {  
+{  
   math::Vector3d p = _pose.Pos();
   math::Quaternion3d r = _pos.Rot(); 
 

@@ -10,19 +10,19 @@ const double g_dt_max = 1.01e-3;
 const double g_dt_step = 1.0e-4;
 
 
-INSTANTIATE_TEST_CASE_P(
-    OdeBoxes, BoxesTest,
+INSTANTIATE_TEST_SUITE_P(
+    DartBoxes, BoxesTest,
     ::testing::Combine(::testing::Values("dart"), ::testing::Range(g_dt_min, g_dt_max, g_dt_step),
                        ::testing::Values(1), ::testing::Bool(), ::testing::Bool()));
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     BulletBoxes, BoxesTest,
     ::testing::Combine(::testing::Values("bullet"), ::testing::Range(g_dt_min, g_dt_max, g_dt_step),
                        ::testing::Values(1), ::testing::Bool(), ::testing::Bool())));
 
 
-INSTANTIATE_TEST_CASE_P(
-    DartBoxes, BoxesTest,
+INSTANTIATE_TEST_SUITE_P(
+    BulletFeatherstoneBoxes, BoxesTest,
     ::testing::Combine(::testing::Values("bullet-featherstone"), ::testing::Range(g_dt_min, g_dt_max, g_dt_step),
                        ::testing::Values(1), ::testing::Bool(), ::testing::Bool())));
 
