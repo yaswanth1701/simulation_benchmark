@@ -173,8 +173,8 @@ BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
       {
        auto link = linkEntites[i];
        math::Pose3d pose = link.WorldInertialPose(); 
-       math::Vector3d = link.WorldLinearVelocity();
-       math::Vector3d = link.WorldAngularVelocity();
+       math::Vector3d linearVelocity = link.WorldLinearVelocity();
+       math::Vector3d angularVelocity = link.WorldAngularVelocity();
       } 
   }
 
