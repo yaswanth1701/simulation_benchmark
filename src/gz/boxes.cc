@@ -23,9 +23,9 @@
 #include <gz/math/Pose3.hh>
 #include <gz/math/Quaternion.hh>
 #include <sdf/Root.hh>
+#include "gz/sim/TestFixture.hh"
 
 #include "boxes.hh"
-#include <boxes_msg.pb.h>
 #include "gz/sim/Util.hh"
 #include "gz/sim/components/World.hh"
 #include "gz/sim/components/Model.hh"
@@ -74,111 +74,115 @@ BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
     
     // Server config to set physic engine (DART, Bullet, BulletFeatherstone)
     ServerConfig serverConfig;
+    serverConfig.SetSdfRoot(sdfPath); 
     serverConfig.SetPhysicsEngine(_physicsEngine);
 
-    auto systemLoader = std::make_shared<SystemLoader>();
-    SimulationRunner runner(root.WorldByIndex(0), systemLoader, serverConfig);
+    // initial linear velocity in global frame
+    math::Vector3d v0;
 
-    // Check for correct physic engine.
-    EXPECT_EQ(runner.serverConfig.PhysicsEngine(), _physicsEngine);
-    EXPECT_TRUE(runner.Paused());
-
-    runner.SetStepSize(_dt);
-
-    int worldCount = 0;
-    bool logMultiple = false;
+    // initial angular velocity in global frame
+    math::Vector3d w0;
     
-    // Check for world parameters
-    runner.EntityCompMgr().Each<World,components::Name>(
-                                [&](const Entity &_entity,
-                                 const World *_world,
-                                const components::Name *_name)->bool
+    if (!_complex) 
     {
-      EXPECT_NE(nullptr, _world);
-      EXPECT_NE(nullptr, _name);
-      EXPECT_EQ("default", _name->Data());
-
-      worldCount++;
-
-      EXPECT_EQ(_modelCount, _world->ModelCount());
-
-      worldEntity = _entity;
-      return true;
+      v0.Set(-0.9, 0.4, 0.1);
+      // Use angular velocity with one non-zero component
+      // to ensure linear angular trajectory
+      w0.Set(0.5, 0, 0);
+    } 
+    else 
+    {
+      v0.Set(-2.0, 2.0, 8.0);
+      // Since Ixx > Iyy > Izz,
+      // angular velocity with large y component
+      // will cause gyroscopic tumbling
+      w0.Set(0.1, 5.0, 0.1);
     }
 
-    EXPECT_NE(kNullEntity, worldEntity);
-    EXPECT_EQ(worldCount, 1);
-    
-    
+    TestFixture testFixture(serverConfig);
+    ASSERT_NE(nullptr, testFixture.Server());
+ 
+    double simTime;
+    bool logMultiple = false;
     std::vector<Link> linkEntites;
     modelEntites.reserve(_modelCount);
 
     // link per model
     uint64_t linkCount = 1; 
     bool addLink = true;
-    auto ecm = runner.EntityCompMgr();
 
-    ecm.Each<Model, ParentEntity>(
+    testFixture.
+    OnConfigure([&](const Entity &_entity,
+        const std::shared_ptr<const sdf::Element> &_sdf,
+        EntityComponentManager &_ecm,
+        EventManager &_eventMgr)
+    {
+
+     Entity worldEntity = _ecm.EntityByComponents(components::Name("default"));
+     EXPECT_EQ(worldEntity, _entity);
+     World world(worldEntity);
+     EXPECT_EQ(_modelCount, world.ModelCount());
+
+     ecm.Each<Model, ParentEntity>(
            [&](const Entity &_entity,
                const Model *_model,
                const ParentEntity *_parent,)->bool
-    { 
-      EXPECT_NE(kNullEntity, _entity);
-      EXPECT_NE(nullptr, _model);
-      EXPECT_NE(nullprt, _parent);
-      EXPECT_NE(worldEntity, _parent->data();
-      EXPECT_NE(linkCount, model->LinkCount());
-
-      Entity linkEntity = model->(ecm, link_name); 
-      EXPECT_NE(kNullEntity, linkEntity);
-      if(logMultiple || addLink)
-      {
-      linkEntites.push_back(Link(linkEntity));
-      addLink = false;
-      }
-      return true;
-    }
-
-    // link properties check
-    for(auto link: linkEntites)
+     { 
+       EXPECT_NE(kNullEntity, _entity);
+       EXPECT_NE(nullptr, _model);
+       EXPECT_NE(nullptr, _parent);
+       EXPECT_NE(worldEntity, _parent->data();
+       EXPECT_NE(linkCount, model->LinkCount());
+ 
+       Entity linkEntity = model->(ecm, link_name); 
+       EXPECT_NE(kNullEntity, linkEntity);
+       if(logMultiple || addLink)
+       {
+       links.push_back(Link(linkEntity));
+       addLink = false;
+       }
+       return true;
+     }
+        // link properties check
+     for(auto link: links)
+     {
+       // world linear velocity of link check
+       ASSERT_EQ(v0, link.WorldLinearVelocity(ecm));
+       // world angular velocity of link check
+       ASSERT_EQ(w0, link.WorldAngularVelcity(ecm));
+       // inertia of link in body frame
+       auto worldInertial = link.WorldInertial();
+       ASSERT_EQ(Moi, worldInertial->MassMatrix.Moi);
+     }
+ 
+     configures++;
+    }).
+    OnPostUpdate([&](const UpdateInfo &_info,
+        const EntityComponentManager &_ecm)
     {
-      // world linear velocity of link check
-      ASSERT_EQ(v0, link.WorldLinearVelocity(ecm));
-      // world angular velocity of link check
-      ASSERT_EQ(w0, link.WorldAngularVelcity(ecm));
-      // inertia of link in body frame
-      auto worldInertial = link.WorldInertial();
-      ASSERT(Moi, worldInertial->MassMatrix.Moi);
-    }
+      postUpdates++;
+      EXPECT_EQ(postUpdates, _info.iterations);
 
-    // resume simulation
-    runner.SetPaused(false);
-    t0 = runner.CurrentInfo().simtime;
-    simDuration = 10;
-    steps = ceil(simDuration/_dt);
-    // simulation loop
-    for(int i = 0; i<steps, i++){
-      
-      runner.step(runner.CurrentInfo);
-      double t = std::chrono::duration<double>(
-                              runner.CurrentInfo.simtime - t0).count();
-      // get link states
-      for(int i = 0; i < linkEntites.size(); i++)
+      simTime = std::chrono::duration_cast<std::chrono::duration<double>>(
+                              _info.simTime - t0).count();
+
+      for(int i = 0; i < links.size(); i++)
       {
-       auto link = linkEntites[i];
+       auto link = links[i];
        math::Pose3d pose = link.WorldInertialPose(); 
        math::Vector3d linearVelocity = link.WorldLinearVelocity();
        math::Vector3d angularVelocity = link.WorldAngularVelocity();
       } 
-  }
+    }).
+    Finalize();
 
-  auto simTimeMili = runner.CurrentInfo.simtime - t0;
-  double simTime = std::chrono::duration_cast<std::chrono::duration<double>>(
-                                                         simTimeMili).count();
+  int simDuration = 10;
+  unsigned int  steps = ceil(simDuration/_dt);
+  // simulation loop
+  testFixture.Server()->Run(true, steps, false);
 
+  EXPECT_EQ(steps, postUpdates);
   ASSERT_NEAR(simDuration, simTime, 1.1*_dt);
-  // pause the simulation runner
-  runner.SetPaused(true);
   
 }
 
