@@ -71,13 +71,11 @@ BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
     std::string link_name= "box_link";
 
     ASSERT_EQ(1u, root.WorldCount());
-    
-    // Server config to set physic engine (DART, Bullet, BulletFeatherstone)
-    ServerConfig serverConfig;
-    serverConfig.SetSdfRoot(sdfPath); 
-    serverConfig.SetPhysicsEngine(_physicsEngine);
 
-    // initial linear velocity in global frame
+    unsigned int configures{0u};
+    unsigned int postUpdates{0u};
+
+        // initial linear velocity in global frame
     math::Vector3d v0;
 
     // initial angular velocity in global frame
@@ -98,6 +96,11 @@ BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
       // will cause gyroscopic tumbling
       w0.Set(0.1, 5.0, 0.1);
     }
+    
+    // Server config to set physic engine (DART, Bullet, BulletFeatherstone)
+    ServerConfig serverConfig;
+    serverConfig.SetSdfRoot(sdfPath); 
+    serverConfig.SetPhysicsEngine(_physicsEngine);
 
     TestFixture testFixture(serverConfig);
     ASSERT_NE(nullptr, testFixture.Server());
@@ -181,6 +184,7 @@ BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
   // simulation loop
   testFixture.Server()->Run(true, steps, false);
 
+  EXPECT_EQ(1u, configures);
   EXPECT_EQ(steps, postUpdates);
   ASSERT_NEAR(simDuration, simTime, 1.1*_dt);
   
