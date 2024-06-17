@@ -67,8 +67,6 @@ void BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
             << " dt=" << _dt << " modelCount=" << _modelCount << " " << sdfRubyPath 
             << " > " << " " << sdfPath;
 
-    std::cout << sdfRubyPath << " " << sdfPath << " " << command.str() << std::endl;
-
     // execute command
     auto commandCheck =  system(command.str().c_str());
     ASSERT_EQ(commandCheck, 0);
