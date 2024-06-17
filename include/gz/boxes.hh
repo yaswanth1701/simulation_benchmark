@@ -19,8 +19,8 @@
 #define BENCHMARK_GZ_BOXES_HH_
 
 #include <string>
-#include <gtest/gtest>
-#include "gz/sim/SimulationRunner.hh"
+#include <tuple>
+#include <gtest/gtest.h>
 
 namespace gz
 {
@@ -31,14 +31,14 @@ namespace gz
     // number of boxes to spawn
     // collision shape on / off
     // complex trajectory on / off
-    typedef std::tr1::tuple < const char *
+    typedef std::tuple < const char*
                             , double
                             , int
                             , bool
                             , bool
                             > char1double1int1bool2;
-    class BoxesTest : public SimulationRunner,
-                      public testing::WithParamInterface<char1double1int1bool2>
+
+    class BoxesTest : public ::testing::TestWithParam<char1double1int1bool2>
     {
       /// \brief Test accuracy of unconstrained rigid body motion.
       /// \param[in] _physicsEngine Physics engine to use.
