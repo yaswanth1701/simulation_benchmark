@@ -8,6 +8,7 @@ add_subdirectory(gtest_vendor)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(WORLDS_DIR ${PROJECT_SOURCE_DIR}/worlds)
 set(TEST_TYPE "BENCHMARK")
 add_subdirectory(src)
 

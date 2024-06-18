@@ -51,7 +51,7 @@ void BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
     sdf::Root root;
 
     // World creation based on test parameters using boxes.world.erb file.
-    std::string sdfRubyPath = common::joinPaths("..", "worlds", 
+    std::string sdfRubyPath = common::joinPaths(PROJECT_SOURCE_DIR, "worlds", 
                                                 "boxes", "boxes.world.erb");
 
     std::stringstream worldFileName;
@@ -59,13 +59,14 @@ void BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
                  << _complex << "_dt" << std::setprecision(2) << std::scientific
                  << _dt << "_modelCount" << _modelCount << ".world";
     // Final world sdf path
-    std::string sdfPath = common::joinPaths("..", "worlds", "boxes", "try", worldFileName.str());
+    std::string sdfPath = common::joinPaths(PROJECT_SOURCE_DIR, "worlds", "boxes", TEST_NAME, worldFileName.str());
 
     // boxes.world.erb to .world conversion command
     std::stringstream command;
     command << "erb" << " collision=" << _collision << " complex=" << _complex
             << " dt=" << _dt << " modelCount=" << _modelCount << " " << sdfRubyPath 
             << " > " << " " << sdfPath;
+    std::cout << command.str() << std::endl;
 
     // execute command
     auto commandCheck =  system(command.str().c_str());
