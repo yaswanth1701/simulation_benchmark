@@ -40,6 +40,7 @@
 #include "gz/sim/TestFixture.hh"
 #include "gz/sim/components/Link.hh"
 #include "gz/sim/components/Pose.hh"
+#include "log.hh"
 using namespace gz;
 using namespace sim;
 using namespace benchmark;
@@ -66,7 +67,18 @@ void BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
     command << "erb" << " collision=" << _collision << " complex=" << _complex
             << " dt=" << _dt << " modelCount=" << _modelCount << " " << sdfRubyPath 
             << " > " << " " << sdfPath;
-    std::cout << command.str() << std::endl;
+
+    //result directory location
+    std::stringstream resultFolderName;
+    resultFolderName << PROJECT_SOURCE_DIR <<"/test_results/" << TEST_NAME << "/MCAP" <<"/boxes" << "_collision" << _collision << "_complex"
+                 << _complex << "_dt" << std::setprecision(2) << std::scientific
+                 << _dt << "_modelCount" << _modelCount << _physicsEngine << ".mcap";
+    std::cout << resultFolderName.str() << std::endl;
+
+    Log<benchmark_proto::BoxesMsg> log(resultFolderName.str());
+    bool logMultiple = false;
+
+    log.setBoxMsg(_physicsEngine, _dt, _collision, _complex, _modelCount, logMultiple);
 
     // execute command
     auto commandCheck =  system(command.str().c_str());
@@ -75,7 +87,7 @@ void BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
     root.Load(sdfPath);
     
     // Link name in model
-    std::string link_name= "box_link";
+    std::string link_name = "box_link";
 
     ASSERT_EQ(1u, root.WorldCount());
 
@@ -120,7 +132,7 @@ void BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
     ASSERT_NE(nullptr, testFixture.Server());
  
     double simTime;
-    bool logMultiple = false;
+    
     std::vector<Link> links;
     links.reserve(_modelCount);
 
@@ -188,6 +200,8 @@ void BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
 
       simTime = std::chrono::duration_cast<std::chrono::duration<double>>(
                               _info.simTime).count();
+      log.recordSimTime(simTime);
+      log.recordComputationTime(simTime);
 
       for(int i = 0; i < links.size(); i++)
       {
@@ -195,17 +209,22 @@ void BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
        auto pose = link.WorldInertialPose(_ecm); 
        auto linearVelocity = link.WorldLinearVelocity(_ecm);
        auto angularVelocity = link.WorldAngularVelocity(_ecm);
+
        ASSERT_TRUE(pose.has_value());
        ASSERT_TRUE(linearVelocity.has_value());
        ASSERT_TRUE(angularVelocity.has_value());
+
+       log.recordPose(i, pose.value());
+       log.recordTwist(i, linearVelocity.value(), angularVelocity.value());
       } 
     }).
     Finalize();
 
-  int simDuration = 2;
+  int simDuration = 10;
   unsigned int  steps = ceil(simDuration/_dt);
   // simulation loop
   testFixture.Server()->Run(true, steps, false);
+  log.stop();
 
   EXPECT_EQ(1, configures);
   EXPECT_EQ(steps, postUpdates);

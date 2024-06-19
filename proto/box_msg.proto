@@ -73,5 +73,5 @@ message BoxesMsg {
     // computational time
     repeated double computation_time = 7;
     // array of box msg
-    repeated Box_msg data = 8;
+    repeated BoxMsg data = 8;
 }
