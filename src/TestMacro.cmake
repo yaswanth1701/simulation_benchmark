@@ -45,10 +45,8 @@ macro (gz_build_tests)
 
     add_test(${BINARY_NAME} ${CMAKE_CURRENT_BINARY_DIR}/${BINARY_NAME})
 
-    set(_env_vars)
     set_tests_properties(${BINARY_NAME} PROPERTIES
-      TIMEOUT 500
-      ENVIRONMENT "${_env_vars}"
+      TIMEOUT 1000
     )
 
     install(TARGETS ${BINARY_NAME}

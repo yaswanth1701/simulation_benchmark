@@ -148,9 +148,9 @@ void BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
         EntityComponentManager &_ecm,
         EventManager &_eventMgr)
     {
-
      Entity worldEntity = _ecm.EntityByComponents(components::Name("default"));
      EXPECT_EQ(worldEntity, _entity);
+
      World world(worldEntity);
      EXPECT_EQ(_modelCount, world.ModelCount(_ecm));
 
@@ -165,33 +165,30 @@ void BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
        EXPECT_NE(kNullEntity, _entity);
        EXPECT_NE(nullptr, _model);
        EXPECT_NE(nullptr, _parent);
-      //  EXPECT_NE(worldEntity, _parent->data());
+
        Model model(_entity);
        EXPECT_EQ(linkCount, model.LinkCount(_ecm));
  
        Entity linkEntity = model.LinkByName(_ecm, link_name); 
        EXPECT_NE(kNullEntity, linkEntity);
+
        if(logMultiple || addLink)
        {
        links.push_back(Link(linkEntity));
        addLink = false;
        }
+
        return true;
      });
      for(const auto link: links)
       {
        link.EnableVelocityChecks(_ecm);
-        // // world linear velocity of link check
-        // ASSERT_EQ(v0, link.WorldLinearVelocity(_ecm).value());
-        // // world angular velocity of link check
-        // ASSERT_EQ(w0, link.WorldAngularVelocity(_ecm).value());
         // // inertia of link in body frame
         auto worldInertial = link.WorldInertial(_ecm);
  
         math::Matrix3d Moi;
         if(worldInertial.has_value())
          Moi = worldInertial.value().MassMatrix().Moi();
- 
         ASSERT_EQ(I0, Moi);
       }
  
@@ -204,7 +201,7 @@ void BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
       EXPECT_EQ(postUpdates, _info.iterations);
 
       simTime = std::chrono::duration_cast<std::chrono::duration<double>>(
-                              _info.simTime).count();
+                                                    _info.simTime).count();
       log.recordSimTime(simTime);
 
       for(int i = 0; i < links.size(); i++)
@@ -226,11 +223,13 @@ void BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
 
   int simDuration = 10;
   unsigned int  steps = ceil(simDuration/_dt);
+
   // simulation loop
   common::Timer wallTime;
   wallTime.Start();
   testFixture.Server()->Run(true, steps, false);
   wallTime.Stop();
+
   double elapsedTime = wallTime.ElapsedTime().count();
   log.recordComputationTime(elapsedTime);
   log.stop();

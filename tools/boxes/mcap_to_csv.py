@@ -1,29 +1,30 @@
 import os
 import sys
+benchmark_dir = os.path.dirname(os.getcwd())
+sys.path.append(os.path.join(benchmark_dir,"mcap/python/mcap"))
+sys.path.append(os.path.join(benchmark_dir, "mcap/python/mcap-protobuf-support"))
 from mcap_protobuf.decoder import DecoderFactory
 from mcap.reader import make_reader
 import csv
 
 DIRECTORY_NAME = sys.argv[1]
 
-STATES_NAMES = [
-    "sim_time",
-    "wall_time",
-    "model_no",
-    "linear_velocity_x",
-    "linear_velocity_y",
-    "linear_velocity_z",
-    "angular_velocity_x",
-    "angular_velocity_y",
-    "angular_velocity_z",
-    "position_x",
-    "position_y",
-    "position_z",
-    "quaternion_w",
-    "quaternion_x",
-    "quaternion_y",
-    "quaternion_z",
-]
+STATES_NAMES = ["sim_time",
+                "model_no",
+                "linear_velocity_x",
+                "linear_velocity_y",
+                "linear_velocity_z",
+                "angular_velocity_x",
+                "angular_velocity_y",
+                "angular_velocity_z",
+                "position_x",
+                "position_y",
+                "position_z",
+                "quaternion_w",
+                "quaternion_x",
+                "quaternion_y",
+                "quaternion_z",]
+
 CONFIGURATION  = ["physics_engine", "time_step", "complex", "collisiion", "model_count"]
 
 
@@ -64,12 +65,12 @@ def MCAP_to_CSV(result_dir, file_name):
             collision = proto_msg.collision
             model_count = proto_msg.model_count
             wall_time = proto_msg.computation_time
-            csv_writer.writerow([physics_engine, dt, complex, collision, model_count])
+            csv_writer.writerow([physics_engine, dt, complex, collision, model_count, wall_time])
 
             csv_writer.writerow(STATES_NAMES)
             for data in proto_msg.data:
                 for t in range(len(time_steps)):
-                    row = [ time_steps[t], wall_time[t], data.model_no, 
+                    row = [ time_steps[t], data.model_no, 
                             data.twists[t].linear.x, data.twists[t].linear.y,
                             data.twists[t].linear.z, data.twists[t].angular.x, 
                             data.twists[t].angular.y, data.twists[t].angular.z, 

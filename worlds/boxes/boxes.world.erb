@@ -42,9 +42,11 @@
   <world name="default">
 
     <gravity><%= gravity.join(" ") %></gravity>
+    
 
     <physics type="ignored">
       <max_step_size><%= dt.to_f %></max_step_size>
+      <real_time_factor> 0 </real_time_factor>
     </physics>
 
     <plugin
