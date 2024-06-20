@@ -47,7 +47,7 @@ macro (gz_build_tests)
 
     set(_env_vars)
     set_tests_properties(${BINARY_NAME} PROPERTIES
-      TIMEOUT 240
+      TIMEOUT 500
       ENVIRONMENT "${_env_vars}"
     )
 

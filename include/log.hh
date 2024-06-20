@@ -69,7 +69,7 @@ using  namespace gz;
 
     public: void recordComputationTime(double &_computationTime)
     {
-      msg.add_computation_time(_computationTime);
+      msg.set_computation_time(_computationTime);
     }
 
     public:  void recordPose(int &_modelIdx, const std::vector<double> _position, 

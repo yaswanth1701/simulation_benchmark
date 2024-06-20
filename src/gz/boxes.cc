@@ -26,14 +26,17 @@
 #include "gz/math/Matrix3.hh"
 #include <gz/math/Inertial.hh>
 #include <sdf/Root.hh>
-#include "gz/sim/TestFixture.hh"
+#include <gz/common/Timer.hh>
+
 
 #include "benchmark_boxes.hh"
+#include "gz/sim/TestFixture.hh"
 #include "gz/sim/Util.hh"
 #include "gz/sim/components/Name.hh"
 #include "gz/sim/components/World.hh"
 #include "gz/sim/components/Model.hh"
 #include "gz/sim/components/ParentEntity.hh"
+#include "gz/sim/components/PhysicsEnginePlugin.hh"
 #include "gz/sim/Model.hh"
 #include "gz/sim/Link.hh"
 #include "gz/sim/World.hh"
@@ -73,7 +76,6 @@ void BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
     resultFolderName << PROJECT_SOURCE_DIR <<"/test_results/" << TEST_NAME << "/MCAP" <<"/boxes" << "_collision" << _collision << "_complex"
                  << _complex << "_dt" << std::setprecision(2) << std::scientific
                  << _dt << "_modelCount" << _modelCount << _physicsEngine << ".mcap";
-    std::cout << resultFolderName.str() << std::endl;
 
     Log<benchmark_proto::BoxesMsg> log(resultFolderName.str());
     bool logMultiple = false;
@@ -152,6 +154,9 @@ void BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
      World world(worldEntity);
      EXPECT_EQ(_modelCount, world.ModelCount(_ecm));
 
+     auto physicEngine = _ecm.Component<components::PhysicsEnginePlugin>(_entity);
+     ASSERT_EQ(_physicsEngine,physicEngine->Data());
+
      _ecm.Each<components::Model, components::ParentEntity>(
            [&](const Entity &_entity,
                const components::Model *_model,
@@ -201,7 +206,6 @@ void BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
       simTime = std::chrono::duration_cast<std::chrono::duration<double>>(
                               _info.simTime).count();
       log.recordSimTime(simTime);
-      log.recordComputationTime(simTime);
 
       for(int i = 0; i < links.size(); i++)
       {
@@ -223,13 +227,17 @@ void BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
   int simDuration = 10;
   unsigned int  steps = ceil(simDuration/_dt);
   // simulation loop
+  common::Timer wallTime;
+  wallTime.Start();
   testFixture.Server()->Run(true, steps, false);
+  wallTime.Stop();
+  double elapsedTime = wallTime.ElapsedTime().count();
+  log.recordComputationTime(elapsedTime);
   log.stop();
 
   EXPECT_EQ(1, configures);
   EXPECT_EQ(steps, postUpdates);
   ASSERT_NEAR(simDuration, simTime, 1.1*_dt);
-  
 }
 
 /////////////////////////////////////////////////
