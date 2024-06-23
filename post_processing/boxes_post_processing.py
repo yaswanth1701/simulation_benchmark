@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 DIRECTORY_NAMES = ["BENCHMARK_boxes_model_count", "BENCHMARK_boxes_dt"]
 
 class PostProcessing:
+       
        def __init__(self):
            self.m = 10
            self.g = 9.8
@@ -137,11 +138,16 @@ class PostProcessing:
                  \n  Energy:           {E_avgabs_error} \n  Angular momentum: {L_avgabs_error} ")
            print("  ---------------------------------- \n")
 
+       def save_metric(self):
+           '''Save the current test metrics to csv file'''
+           pass
+    
+
        
 if __name__ == "__main__":
     for dir in DIRECTORY_NAMES:
         print(f"BENCHMARK: {dir}")
-        
+
         post_processing = PostProcessing()
         result_dir , file_names = post_processing.get_file_names(dir)
 
