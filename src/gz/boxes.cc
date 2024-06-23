@@ -80,7 +80,7 @@ void BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
     Log<benchmark_proto::BoxesMsg> log(resultFolderName.str());
     bool logMultiple = false;
 
-    log.setBoxMsg(_physicsEngine, _dt, _collision, _complex, _modelCount, logMultiple);
+    log.setBoxMsg(_physicsEngine, _dt,  _complex, _collision, _modelCount, logMultiple);
 
     // execute command
     auto commandCheck =  system(command.str().c_str());
@@ -180,9 +180,25 @@ void BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
 
        return true;
      });
+    
      for(const auto link: links)
       {
        link.EnableVelocityChecks(_ecm);
+      }
+
+      configures++;
+    }).
+    OnPostUpdate([&](const UpdateInfo &_info,
+        const EntityComponentManager &_ecm)
+    { 
+      postUpdates++;
+       for(const auto link: links)
+      {
+        // world linear velocity of link check
+        ASSERT_EQ(v0, link.WorldLinearVelocity(_ecm).value());
+        // world angular velocity of link check
+        ASSERT_EQ(w0, link.WorldAngularVelocity(_ecm).value());
+
         // // inertia of link in body frame
         auto worldInertial = link.WorldInertial(_ecm);
  
@@ -191,52 +207,55 @@ void BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
          Moi = worldInertial.value().MassMatrix().Moi();
         ASSERT_EQ(I0, Moi);
       }
- 
-     configures++;
-    }).
-    OnPostUpdate([&](const UpdateInfo &_info,
+
+    }).Finalize();
+
+    testFixture.Server()->RunOnce(true);
+    
+    testFixture.OnPostUpdate([&](const UpdateInfo &_info,
         const EntityComponentManager &_ecm)
     {
       postUpdates++;
       EXPECT_EQ(postUpdates, _info.iterations);
-
+      
       simTime = std::chrono::duration_cast<std::chrono::duration<double>>(
                                                     _info.simTime).count();
       log.recordSimTime(simTime);
-
+  
       for(int i = 0; i < links.size(); i++)
       {
        auto link = links[i];
        auto pose = link.WorldInertialPose(_ecm); 
+  
        auto linearVelocity = link.WorldLinearVelocity(_ecm);
        auto angularVelocity = link.WorldAngularVelocity(_ecm);
-
+  
        ASSERT_TRUE(pose.has_value());
        ASSERT_TRUE(linearVelocity.has_value());
        ASSERT_TRUE(angularVelocity.has_value());
-
+       
        log.recordPose(i, pose.value());
        log.recordTwist(i, linearVelocity.value(), angularVelocity.value());
       } 
     }).
     Finalize();
+  
+    int simDuration = 1;
+    unsigned int  steps = ceil(simDuration/_dt);
 
-  int simDuration = 10;
-  unsigned int  steps = ceil(simDuration/_dt);
+    //simulation loop
+    common::Timer wallTime;
+    wallTime.Start();
+    testFixture.Server()->Run(true, steps, false);
+    wallTime.Stop();
 
-  // simulation loop
-  common::Timer wallTime;
-  wallTime.Start();
-  testFixture.Server()->Run(true, steps, false);
-  wallTime.Stop();
-
-  double elapsedTime = wallTime.ElapsedTime().count();
-  log.recordComputationTime(elapsedTime);
-  log.stop();
-
-  EXPECT_EQ(1, configures);
-  EXPECT_EQ(steps, postUpdates);
-  ASSERT_NEAR(simDuration, simTime, 1.1*_dt);
+    double elapsedTime = wallTime.ElapsedTime().count();
+    log.recordComputationTime(elapsedTime);
+    log.stop();
+  
+    EXPECT_EQ(1, configures);
+    EXPECT_EQ(steps, postUpdates - 1);
+    ASSERT_NEAR(simDuration, simTime, 1.1*_dt);
 }
 
 /////////////////////////////////////////////////
