@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import csv
 
 
-DIRECTORY_NAMES = ["BENCHMARK_boxes_dt_TEST"]
+DIRECTORY_NAMES = ["BENCHMARK_boxes_model_count_TEST"]
 
 class PostProcessing:
        
@@ -26,8 +26,9 @@ class PostProcessing:
            metrics_filename = test_name + ".csv"
            metrics_path = os.path.join("~", "simulation_benchmark", "test_results", metrics_filename)
            metrics_path = os.path.expanduser(metrics_path)
-           csv_file = open(metrics_path, mode='w', newline='')
-           self.csv_writer = csv.writer(csv_file)
+
+           self.csv_file = open(metrics_path, mode='w', newline='')
+           self.csv_writer = csv.writer(self.csv_file)
 
            metrics = ["angMomentum0", "angMomentumErr_maxAbs","angPositionErr_x_maxAbs", 
                       "	angPositionErr_y_maxAbs", "angPositionErr_z_maxAbs", "collision", 
@@ -205,11 +206,12 @@ if __name__ == "__main__":
             collision = bool(config[0,3])
             no_of_models = config[0,4]
             computation_time = config[0,5]
-
-            states_per_model = int(len(states[:,0])/no_of_models)
-            states = states.reshape(no_of_models, states_per_model,-1)
+            
             print(f" Physics engines: {physic_engine} \n Timestep: {dt} \n Complex: {complex} \n Number of models: {no_of_models}")
             post_processing.set_test_parameters(physic_engine, dt, complex, collision, no_of_models, computation_time)
+            no_of_models = 1 
+            states_per_model = int(len(states[:,0])/no_of_models)
+            states = states.reshape(no_of_models, states_per_model,-1)
 
             for i in range(no_of_models):
                 print(f" => Model number: {i+1}")
@@ -218,3 +220,5 @@ if __name__ == "__main__":
                 post_processing.get_analytical_sol(sim_time, i)
                 post_processing.cal_metrics(model_states)
                 post_processing.save_metrics()
+        
+        post_processing.csv_file.close()
