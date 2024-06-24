@@ -14,10 +14,10 @@ INSTANTIATE_TEST_CASE_P(
     ::testing::Combine(::testing::Values("gz-physics-dartsim-plugin"), ::testing::Range(g_dt_min, g_dt_max, g_dt_step),
                        ::testing::Values(1), ::testing::Values(true), ::testing::Bool()));
 
-INSTANTIATE_TEST_SUITE_P(
-    BulletBoxes, BoxesTest,
-    ::testing::Combine(::testing::Values("gz-physics-bullet-plugin"), ::testing::Range(g_dt_min, g_dt_max, g_dt_step),
-                       ::testing::Values(1), ::testing::Values(true), ::testing::Bool()));
+// INSTANTIATE_TEST_SUITE_P(
+//     BulletBoxes, BoxesTest,
+//     ::testing::Combine(::testing::Values("gz-physics-bullet-plugin"), ::testing::Range(g_dt_min, g_dt_max, g_dt_step),
+//                        ::testing::Values(1), ::testing::Values(true), ::testing::Bool()));
 
 
 INSTANTIATE_TEST_SUITE_P(

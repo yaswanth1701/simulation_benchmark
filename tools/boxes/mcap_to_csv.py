@@ -25,15 +25,14 @@ STATES_NAMES = ["sim_time",
                 "quaternion_y",
                 "quaternion_z",]
 
-CONFIGURATION  = ["physics_engine", "time_step", "complex", "collisiion", "model_count"]
+CONFIGURATION  = ["physics_engine", "time_step", "complex", "collisiion", "model_count","wall_time"]
 
 
 
 def get_file_names(result_folder):
-
-    current_dir = os.getcwd()
-    parent_dir = os.path.dirname(current_dir)
-    result_dir = os.path.join(parent_dir, "test_results", result_folder)
+    result_dir = os.path.join("~", "simulation_benchmark","test_results", result_folder)
+    result_dir = os.path.expanduser(result_dir)
+    print(result_dir)
     mcap_dir = os.path.join(result_dir, "MCAP")
     file_names = os.listdir(mcap_dir)
     csv_dir = os.path.join(result_dir,"CSV")
@@ -44,7 +43,7 @@ def get_file_names(result_folder):
 
 def MCAP_to_CSV(result_dir, file_name):
 
-    csv_filename = file_name.split('.')[0] + '.csv'
+    csv_filename = file_name.split('.mcap')[0] + '.csv'
     
     csv_filepath = os.path.join(result_dir,"CSV",csv_filename)
     mcap_filepath = os.path.join(result_dir,"MCAP",file_name)

@@ -48,6 +48,9 @@ macro (gz_build_tests)
     set_tests_properties(${BINARY_NAME} PROPERTIES
       TIMEOUT 1000
     )
+    add_test(NAME csv_${BINARY_NAME}
+      COMMAND python3 ${PROJECT_SOURCE_DIR}/tools/boxes/mcap_to_csv.py ${BINARY_NAME}
+    )
 
     install(TARGETS ${BINARY_NAME}
       RUNTIME DESTINATION bin

@@ -240,7 +240,7 @@ void BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
     }).
     Finalize();
   
-    int simDuration = 1;
+    int simDuration = 10;
     unsigned int  steps = ceil(simDuration/_dt);
 
     //simulation loop

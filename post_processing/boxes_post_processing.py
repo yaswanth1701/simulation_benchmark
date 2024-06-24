@@ -53,6 +53,7 @@ class PostProcessing:
            self.N = len(sim_time)
            self.pos_a = np.zeros((self.N,3))
            self.v_a = np.zeros((self.N,3))   
+
            # calculation of initial energy and angular momentum
            self.L0 = self.I.dot(w0)
            self.L0_mag = np.linalg.norm(self.L0)
@@ -60,6 +61,7 @@ class PostProcessing:
            V0 = - self.m*self.gravity.dot(self.pos0)
            self.E0 = T0  + V0 
            self.E0_mag = np.linalg.norm(self.E0)
+           
            # calculation of velocity and position profile with time
            for i, t in enumerate(sim_time):
                self.v_a[i] = v0 + self.gravity*t

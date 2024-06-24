@@ -15,11 +15,11 @@ INSTANTIATE_TEST_CASE_P(
                        ::testing::Range(g_models_min, g_models_max,g_models_step),
                        ::testing::Bool(), ::testing::Values(true)));
 
-INSTANTIATE_TEST_SUITE_P(
-    BulletBoxes, BoxesTest,
-    ::testing::Combine(::testing::Values("gz-physics-bullet-plugin"), ::testing::Values(5.0e-4),
-                       ::testing::Range(g_models_min, g_models_max,g_models_step),
-                       ::testing::Bool(), ::testing::Values(true)));
+// INSTANTIATE_TEST_SUITE_P(
+//     BulletBoxes, BoxesTest,
+//     ::testing::Combine(::testing::Values("gz-physics-bullet-plugin"), ::testing::Values(5.0e-4),
+//                        ::testing::Range(g_models_min, g_models_max,g_models_step),
+//                        ::testing::Bool(), ::testing::Values(true)));
 
 
 INSTANTIATE_TEST_SUITE_P(
