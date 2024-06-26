@@ -17,5 +17,12 @@ analytically can be used to compare with the simulated/ numerical solution.
 
 ## Simple scenario
 
-As the rigid body is at rest, it should not experience any friction force. The forces experienced by it are normal force in the upward direction and gravitational force in the downward direction. 
+As the rigid body is at rest, it should not experience any friction force. The forces experienced by it are a normal force in the upward direction and gravitational force in the downward direction. 
 Which should be equal to each other in magnitude. In an equilibrium state, any rigid body should have a zero net force and torque about its center of mass.
+
+![default_gzclient_camera(1)-2024-06-26T23_57_14 798017](https://github.com/yaswanth1701/simulation_benchmark/assets/92177410/370f8aeb-b7de-42d7-a169-cbc3ba2a48d4)
+
+## Complex scenario
+As the rigid body is given a specific initial velocity, friction force will be acting in the horizontal plane. Friction is a non-conservative force, so energy conservation will not be applicable and the only analytical solution for the position and velocity are available.
+
+
