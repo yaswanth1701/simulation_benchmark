@@ -39,6 +39,7 @@ using  namespace gz;
       msg.set_complex(_complex);
       msg.set_collision(_collision);
       msg.set_model_count(_modelCount);
+      msg.set_log_multiple(_logMultiple);
     
       if(_logMultiple)
       {

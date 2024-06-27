@@ -58,6 +58,9 @@ message BoxesMsg {
     //  number of models 
     int32 model_count = 5;
 
+    // all model recorded 
+    bool log_multiple = 6;
+
     message BoxMsg{
     // model number 
     int32 model_no = 1;
@@ -68,10 +71,10 @@ message BoxesMsg {
     repeated Twist twists = 5;
     }
     // simulation time
-    repeated double sim_time = 6;
+    repeated double sim_time = 7;
 
     // computational time
-    double computation_time = 7;
+    double computation_time = 8;
     // array of box msg
-    repeated BoxMsg data = 8;
+    repeated BoxMsg data = 9;
 }

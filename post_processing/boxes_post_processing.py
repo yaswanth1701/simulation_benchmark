@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import csv
 
 
-DIRECTORY_NAMES = ["BENCHMARK_boxes_model_count_TEST"]
+DIRECTORY_NAMES = ["BENCHMARK_boxes_dt_TEST", "BENCHMARK_boxes_model_count_TEST"]
 
 class PostProcessing:
        
@@ -204,12 +204,18 @@ if __name__ == "__main__":
             dt = config[0,1]
             complex = bool(config[0,2])
             collision = bool(config[0,3])
-            no_of_models = config[0,4]
+            modelCount = config[0,4]
             computation_time = config[0,5]
+            log_multiple = bool(config[0,6])
             
-            print(f" Physics engines: {physic_engine} \n Timestep: {dt} \n Complex: {complex} \n Number of models: {no_of_models}")
-            post_processing.set_test_parameters(physic_engine, dt, complex, collision, no_of_models, computation_time)
-            no_of_models = 1 
+            print(f" Physics engines: {physic_engine} \n Timestep: {dt} \n Complex: {complex} \n Number of models: {modelCount}")
+            post_processing.set_test_parameters(physic_engine, dt, complex, collision, modelCount, computation_time)
+
+            if log_multiple:
+                no_of_models = modelCount
+            else:
+                no_of_models = 1 
+
             states_per_model = int(len(states[:,0])/no_of_models)
             states = states.reshape(no_of_models, states_per_model,-1)
 

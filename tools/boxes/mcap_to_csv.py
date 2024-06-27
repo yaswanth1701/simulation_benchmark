@@ -25,7 +25,8 @@ STATES_NAMES = ["sim_time",
                 "quaternion_y",
                 "quaternion_z",]
 
-CONFIGURATION  = ["physics_engine", "time_step", "complex", "collisiion", "model_count","wall_time"]
+CONFIGURATION  = ["physics_engine", "time_step", "complex", 
+                  "collisiion", "model_count","wall_time", "log_multiple"]
 
 
 
@@ -64,7 +65,8 @@ def MCAP_to_CSV(result_dir, file_name):
             collision = proto_msg.collision
             model_count = proto_msg.model_count
             wall_time = proto_msg.computation_time
-            csv_writer.writerow([physics_engine, dt, complex, collision, model_count, wall_time])
+            log_multiple = proto_msg.log_multiple
+            csv_writer.writerow([physics_engine, dt, complex, collision, model_count, wall_time,log_multiple])
 
             csv_writer.writerow(STATES_NAMES)
             for data in proto_msg.data:
