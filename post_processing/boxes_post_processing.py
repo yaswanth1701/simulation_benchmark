@@ -52,7 +52,7 @@ class PostProcessing:
        
        def set_test_parameters(self, physic_engine, dt, complex, 
                                collision, no_of_models, computation_time):
-           self.physic_engine = physic_engine
+           self.physics_engine = physic_engine
            self.dt = dt
            self.complex = complex
            self.collision = collision
@@ -178,11 +178,13 @@ class PostProcessing:
            print("  ---------------------------------- \n")
 
        def save_metrics(self):
+           
            '''Save the current test metrics to csv file'''
            self.get_maxabs_error()
+               
            self.csv_writer.writerow([self.L0_mag, self.L_maxabs_error, self.a_maxabs_error_x, 
                                      self.a_maxabs_error_y, self.a_maxabs_error_z, self.collision,
-                                     self.dt, self.E_maxabs_error, self.physic_engine, self.complex,
+                                     self.dt, self.E_maxabs_error, self.physics_engine, self.complex,
                                      self.p_maxabs_error, self.v_maxabs_error, self.no_of_models,
                                      self.total_sim_time, self.computation_time, self.time_ratio])
     

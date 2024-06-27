@@ -66,7 +66,17 @@ def MCAP_to_CSV(result_dir, file_name):
             model_count = proto_msg.model_count
             wall_time = proto_msg.computation_time
             log_multiple = proto_msg.log_multiple
-            csv_writer.writerow([physics_engine, dt, complex, collision, model_count, wall_time,log_multiple])
+
+            if "dartsim-plugin" in physics_engine:
+               engine = "dart"
+            elif "bullet-featherstone-plugin" in physics_engine:
+               engine = "bullet-featherstone"
+            elif "bullet-plugin" in physics_engine:
+               engine = "bullet"
+            else:
+                engine = physics_engine
+
+            csv_writer.writerow([engine, dt, complex, collision, model_count, wall_time,log_multiple])
 
             csv_writer.writerow(STATES_NAMES)
             for data in proto_msg.data:
