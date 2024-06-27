@@ -1,4 +1,8 @@
 import numpy as np
+import sys
+import os
+path = os.path.abspath("tools")
+sys.path.append(path)
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 mpl.rcParams.update({'font.size': 16})
@@ -48,7 +52,6 @@ def plotEnginesDt(params, yname
                 , yscale='linear'
                 , title='title'
                 ):
-    print(f"here is params {params}")
     engines = {}
     engines['bullet-featherstone'] = ['$B$', 'b--']
     engines['dart'] = ['$d$', 'g--']
@@ -230,4 +233,16 @@ def plotErrorTime(classname, title_prefix
     plotEnginesTime(p, yname='energyError_maxAbs', title=title_prefix + 'energy'
                     , csvDict=csvDict, legend=legend, yscale=yscale)
 
+# boxes_model_count = makeCsvDictOfArrays('test_results/BENCHMARK_boxes_model_count_TEST.csv')
 
+# csvDict = boxes_model_count
+# yname = 'timeRatio'
+# ylabel = 'Time ratio (real / sim)'
+# ylim = (-0.40000000000000036, 8.4000000000000004)
+
+# plotEnginesModelCount({'collision': 'True'}
+#                   , csvDict=csvDict
+#                   , yname=yname
+#                   , ylabel=ylabel
+#                   , title='Computational time with collision-checking'
+#                    )

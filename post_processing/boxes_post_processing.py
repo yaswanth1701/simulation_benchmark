@@ -25,9 +25,9 @@ class PostProcessing:
            
            metrics_filename = test_name + ".csv"
            metrics_path = os.path.join("~", "simulation_benchmark", "test_results", metrics_filename)
-           metrics_path = os.path.expanduser(metrics_path)
+           self.metrics_path = os.path.expanduser(metrics_path)
 
-           self.csv_file = open(metrics_path, mode='w', newline='')
+           self.csv_file = open(self.metrics_path, mode='w', newline='')
            self.csv_writer = csv.writer(self.csv_file)
 
            metrics = ["angMomentum0", "angMomentumErr_maxAbs","angPositionErr_x_maxAbs", 
@@ -235,3 +235,7 @@ if __name__ == "__main__":
                 post_processing.save_metrics()
         
         post_processing.csv_file.close()
+
+        data = pd.read_csv(post_processing.metrics_path)
+        storted_data = data.sort_values(by='modelCount')
+        storted_data.to_csv(post_processing.metrics_path, index=False)
