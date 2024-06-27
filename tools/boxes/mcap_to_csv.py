@@ -26,7 +26,8 @@ STATES_NAMES = ["sim_time",
                 "quaternion_z",]
 
 CONFIGURATION  = ["physics_engine", "time_step", "complex", 
-                  "collisiion", "model_count","wall_time", "log_multiple"]
+                  "collisiion", "model_count","wall_time", 
+                  "log_multiple", "classname"]
 
 
 
@@ -67,6 +68,11 @@ def MCAP_to_CSV(result_dir, file_name):
             wall_time = proto_msg.computation_time
             log_multiple = proto_msg.log_multiple
 
+            if complex:
+                class_name = "DtComplex"
+            else:
+                class_name = "DtSimple"
+
             if "dartsim-plugin" in physics_engine:
                engine = "dart"
             elif "bullet-featherstone-plugin" in physics_engine:
@@ -76,7 +82,8 @@ def MCAP_to_CSV(result_dir, file_name):
             else:
                 engine = physics_engine
 
-            csv_writer.writerow([engine, dt, complex, collision, model_count, wall_time,log_multiple])
+            csv_writer.writerow([engine, dt, complex, collision, model_count,
+                                 wall_time, log_multiple, class_name])
 
             csv_writer.writerow(STATES_NAMES)
             for data in proto_msg.data:

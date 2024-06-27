@@ -31,9 +31,9 @@ class PostProcessing:
            self.csv_writer = csv.writer(self.csv_file)
 
            metrics = ["angMomentum0", "angMomentumErr_maxAbs","angPositionErr_x_maxAbs", 
-                      "	angPositionErr_y_maxAbs", "angPositionErr_z_maxAbs", "collision", 
+                      "angPositionErr_y_maxAbs", "angPositionErr_z_maxAbs", "collision", 
                       "dt", "energyError_maxAbs", 	"engine", "isComplex", "linPositionErr_maxAbs",
-                      "linVelocityErr_maxAbs", "modelCount", "simTime", "time", "timeRatio"]
+                      "linVelocityErr_maxAbs", "modelCount", "simTime", "time", "timeRatio", "classname"]
            self.csv_writer.writerow(metrics)
 
 
@@ -51,13 +51,15 @@ class PostProcessing:
            return result_dir, file_names
        
        def set_test_parameters(self, physic_engine, dt, complex, 
-                               collision, no_of_models, computation_time):
+                               collision, no_of_models, computation_time,
+                               class_name):
            self.physics_engine = physic_engine
            self.dt = dt
            self.complex = complex
            self.collision = collision
            self.no_of_models = no_of_models
            self.computation_time = computation_time
+           self.class_name = class_name
        
        def get_analytical_sol(self, sim_time: np.ndarray, model_no: int):
            '''method to get the analytical solution for box benchmark'''
@@ -186,7 +188,8 @@ class PostProcessing:
                                      self.a_maxabs_error_y, self.a_maxabs_error_z, self.collision,
                                      self.dt, self.E_maxabs_error, self.physics_engine, self.complex,
                                      self.p_maxabs_error, self.v_maxabs_error, self.no_of_models,
-                                     self.total_sim_time, self.computation_time, self.time_ratio])
+                                     self.total_sim_time, self.computation_time, self.time_ratio,
+                                     self.class_name])
     
 
        
@@ -196,7 +199,7 @@ if __name__ == "__main__":
 
         post_processing = PostProcessing(dir)
         result_dir , file_names = post_processing.get_file_names(dir)
-        file_names = sorted(file_names)
+        file_names = sorted(file_names, reverse=True)
 
         for file in file_names:
             print(f"TEST: {file}")
@@ -210,9 +213,10 @@ if __name__ == "__main__":
             modelCount = config[0,4]
             computation_time = config[0,5]
             log_multiple = bool(config[0,6])
+            class_name = config[0,7]
             
             print(f" Physics engines: {physic_engine} \n Timestep: {dt} \n Complex: {complex} \n Number of models: {modelCount}")
-            post_processing.set_test_parameters(physic_engine, dt, complex, collision, modelCount, computation_time)
+            post_processing.set_test_parameters(physic_engine, dt, complex, collision, modelCount, computation_time, class_name)
 
             if log_multiple:
                 no_of_models = modelCount

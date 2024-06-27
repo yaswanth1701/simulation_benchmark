@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 mpl.rcParams.update({'font.size': 16})
 from csv_dictionary import *
 
-boxes = makeCsvDictOfArrays('test_results/BENCHMARK_boxes_dt.csv')
+boxes = makeCsvDictOfArrays('test_results/BENCHMARK_boxes_dt_TEST.csv')
 
 color1 = [0, 0, 0.5]
 color2 = [0.5, 0.5, 0.5]
@@ -38,6 +38,7 @@ def plotEnginesDt(params, yname
                 , ayscale=1.1
                 , csvDict=boxes
                 , legend='best'
+                , skipDart= False
                 , xname='dt'
                 , xlabel='Time step (s)'
                 , ylabel='Error'
@@ -47,6 +48,7 @@ def plotEnginesDt(params, yname
                 , yscale='linear'
                 , title='title'
                 ):
+    print(f"here is params {params}")
     engines = {}
     engines['bullet-featherstone'] = ['$B$', 'b--']
     engines['dart'] = ['$d$', 'g--']
@@ -109,10 +111,10 @@ def plotEnginesTime(params, yname
                   , yscale='linear'
                   , title='title'
                    ):
+    print(f"here is params {params}")
     plotEnginesDt(params, yname
                   , csvDict=csvDict
                   , legend=legend
-                  , skipDart=skipDart
                   , xname=xname
                   , xlabel=xlabel
                   , ylabel=ylabel
@@ -161,7 +163,6 @@ def plot3TimeDt(params
                 , csvDict=csvDict
                 , yname=yname
                 , title=title
-                , skipDart=skipDart
                 , xscale=xscale
                 , yscale=yscale
                 )
@@ -170,7 +171,6 @@ def plot3TimeDt(params
                 , yname='timeRatio'
                 , ylabel='Computational time / sim time'
                 , title='Computational time'
-                , skipDart=skipDart
                 , xscale=xscale
                 , yscale=yscale
                 )
@@ -178,7 +178,6 @@ def plot3TimeDt(params
                 , csvDict=csvDict
                 , yname=yname
                 , title=title
-                , skipDart=skipDart
                 , xscale=xscale
                 , yscale=yscale
                 )
