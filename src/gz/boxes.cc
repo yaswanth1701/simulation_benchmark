@@ -74,8 +74,8 @@ void BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
     //result directory location
     std::stringstream resultFolderName;
     resultFolderName << PROJECT_SOURCE_DIR <<"/test_results/" << TEST_NAME << "/MCAP" <<"/boxes_" << _physicsEngine <<
-                 "_collision" << _collision << "_complex" << _complex << "_dt" << std::setprecision(2) << std::scientific
-                 << _dt << "_modelCount" << _modelCount << ".mcap";
+                 "_collision" << _collision << "_complex" << _complex << "_dt"  << _dt << "_modelCount" << _modelCount 
+                 << ".mcap";
 
     Log<benchmark_proto::BoxesMsg> log(resultFolderName.str());
     bool logMultiple = false;
