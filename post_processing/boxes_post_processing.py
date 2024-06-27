@@ -196,6 +196,7 @@ if __name__ == "__main__":
 
         post_processing = PostProcessing(dir)
         result_dir , file_names = post_processing.get_file_names(dir)
+        file_names = sorted(file_names)
 
         for file in file_names:
             print(f"TEST: {file}")
