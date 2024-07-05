@@ -71,7 +71,11 @@ void BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
             << " dt=" << _dt << " modelCount=" << _modelCount << " " << sdfRubyPath 
             << " > " << " " << sdfPath;
 
-    //result directory location
+    // execute command
+    auto commandCheck =  system(command.str().c_str());
+    ASSERT_EQ(commandCheck, 0);
+
+    // logging result directory location
     std::stringstream resultFolderName;
     resultFolderName << PROJECT_SOURCE_DIR <<"/test_results/" << TEST_NAME << "/MCAP" <<"/boxes_" << _physicsEngine <<
                  "_collision" << _collision << "_complex" << _complex << "_dt"  << _dt << "_modelCount" << _modelCount 
@@ -81,11 +85,7 @@ void BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
     bool logMultiple = false;
 
     log.setBoxMsg(_physicsEngine, _dt,  _complex, _collision, _modelCount, logMultiple);
-
-    // execute command
-    auto commandCheck =  system(command.str().c_str());
-    ASSERT_EQ(commandCheck, 0);
-
+  
     root.Load(sdfPath);
     
     // Link name in model
@@ -96,7 +96,7 @@ void BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
     unsigned int configures{0u};
     unsigned int postUpdates{0u};
 
-        // initial linear velocity in global frame
+    // initial linear velocity in global frame
     math::Vector3d v0;
 
     // initial angular velocity in global frame
@@ -155,7 +155,7 @@ void BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
      EXPECT_EQ(_modelCount, world.ModelCount(_ecm));
 
      auto physicEngine = _ecm.Component<components::PhysicsEnginePlugin>(_entity);
-     ASSERT_EQ(_physicsEngine,physicEngine->Data());
+     ASSERT_EQ(_physicsEngine, physicEngine->Data());
 
      _ecm.Each<components::Model, components::ParentEntity>(
            [&](const Entity &_entity,
@@ -209,7 +209,8 @@ void BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
       }
 
     }).Finalize();
-
+    
+    //To perform sim update 
     testFixture.Server()->RunOnce(true);
     
     testFixture.OnPostUpdate([&](const UpdateInfo &_info,
@@ -228,14 +229,18 @@ void BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
        auto pose = link.WorldInertialPose(_ecm); 
   
        auto linearVelocity = link.WorldLinearVelocity(_ecm);
-       auto angularVelocity = link.WorldAngularVelocity(_ecm);
-  
+       // angular velocity in world frame
+       auto angularVelocity_w = link.WorldAngularVelocity(_ecm);
+
        ASSERT_TRUE(pose.has_value());
        ASSERT_TRUE(linearVelocity.has_value());
-       ASSERT_TRUE(angularVelocity.has_value());
+       ASSERT_TRUE(angularVelocity_w.has_value());
+
+       // angular velocity in body frame
+       auto angularVelocity_b = pose.value().Rot().RotateVectorReverse(angularVelocity_w.value());
        
        log.recordPose(i, pose.value());
-       log.recordTwist(i, linearVelocity.value(), angularVelocity.value());
+       log.recordTwist(i, linearVelocity.value(), angularVelocity_b);
       } 
     }).
     Finalize();

@@ -2,12 +2,12 @@ import sys
 import os 
 import pandas as pd
 import numpy as np
-from gz.math7 import Quaterniond
+from gz.math7 import Quaterniond, Vector3d
 import matplotlib.pyplot as plt
 import csv
 
 
-DIRECTORY_NAMES = ["BENCHMARK_boxes_dt_TEST", "BENCHMARK_boxes_model_count_TEST"]
+DIRECTORY_NAMES = ["BENCHMARK_boxes_dt_TEST", "BENCHMARK_boxes_model_count_TEST.csv"]
 
 class PostProcessing:
        
@@ -66,11 +66,11 @@ class PostProcessing:
 
            if not self.complex:
             v0 = np.array([-0.9, 0.4, 0.1])
-            w0 = np.array([0.5, 0.0, 0.0])
+            self.w0 = np.array([0.5, 0.0, 0.0])
             self.gravity = np.array([0, 0, 0])
            else:
             v0 = np.array([-2.0, 2.0, 8.0])
-            w0 = np.array([0.1, 5.0, 0.1])
+            self.w0 = np.array([0.1, 5.0, 0.1])
             self.gravity = np.array([0, 0, -self.g])
 
            self.pos0 = np.array([0,2*self.box_z*model_no,0])
@@ -81,10 +81,10 @@ class PostProcessing:
            self.v_a = np.zeros((self.N,3))   
 
            # calculation of initial energy and angular momentum
-           self.L0 = self.I.dot(w0)
+           self.L0 = self.I.dot(self.w0)
            self.L0_mag = np.linalg.norm(self.L0)
 
-           T0 = 0.5*self.m*v0.dot(v0) + 0.5*w0.dot(self.I.dot(w0))
+           T0 = 0.5*self.m*v0.dot(v0) + 0.5*self.w0.dot(self.I.dot(self.w0))
            V0 = - self.m*self.gravity.dot(self.pos0)
            self.E0 = T0  + V0 
            self.E0_mag = np.linalg.norm(self.E0)
@@ -104,14 +104,23 @@ class PostProcessing:
 
             # calculation of energy and angular momentum error
             E = np.zeros(self.N)
+            E_a = np.zeros(self.N)
             L = np.zeros((self.N,3))
             for i in range(self.N):
                 tran_E = 0.5*self.m*v[i].dot(v[i])
                 rot_E = 0.5*omega[i].dot(self.I.dot(omega[i]))
                 V = - self.m*self.gravity.dot(pos[i])
                 E[i] = tran_E + rot_E + V
-                L[i] = self.I.dot(omega[i])
-            
+
+                # angular momentum in body frame 
+                l_b = self.I.dot(omega[i]).tolist()
+                quat = rot[i].tolist()
+                quat = Quaterniond(quat[0], quat[1], quat[2], quat[3])
+                # angular momentum in world frame
+                l_vector =  Vector3d(l_b[0], l_b[1],l_b[2])
+                l_w = quat.rotate_vector(l_vector)
+                L[i] = np.array([l_w[0], l_w[1], l_w[2]])
+
             # calculation of velocity and postion error and their magnitude
             v_error = (v - self.v_a)
             self.v_error_mag = np.array([np.linalg.norm(x) for x in v_error])
@@ -139,6 +148,7 @@ class PostProcessing:
 
             # calculating computional time for simulation
             self.total_sim_time = sim_time[-1]
+            print(sim_time[0])
             self.time_ratio = self.computation_time/self.total_sim_time
             print(f"  Time ratio: {self.time_ratio} \n")
 
@@ -199,7 +209,8 @@ if __name__ == "__main__":
 
         post_processing = PostProcessing(dir)
         result_dir , file_names = post_processing.get_file_names(dir)
-        file_names = sorted(file_names, reverse=True)
+        file_names = sorted(file_names, reverse=False)
+        #file_names = ["boxes_gz-physics-dartsim-plugin_collision1_complex1_dt0.001_modelCount1.csv"]
 
         for file in file_names:
             print(f"TEST: {file}")
@@ -235,7 +246,8 @@ if __name__ == "__main__":
                 post_processing.save_metrics()
         
         post_processing.csv_file.close()
-
+        
+        # sorting the data based on model count
         data = pd.read_csv(post_processing.metrics_path)
-        storted_data = data.sort_values(by='modelCount')
-        storted_data.to_csv(post_processing.metrics_path, index=False)
+        stort_model_count = data.sort_values(by='modelCount')
+        stort_model_count.to_csv(post_processing.metrics_path, index=False)
