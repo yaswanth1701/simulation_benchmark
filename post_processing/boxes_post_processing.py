@@ -6,8 +6,8 @@ from gz.math7 import Quaterniond, Vector3d
 import matplotlib.pyplot as plt
 import csv
 
-
-DIRECTORY_NAMES = ["BENCHMARK_boxes_dt_TEST", "BENCHMARK_boxes_model_count_TEST.csv"]
+print(sys.argv[0])
+DIRECTORY_NAME = sys.argv[1]
 
 class PostProcessing:
        
@@ -148,7 +148,7 @@ class PostProcessing:
 
             # calculating computional time for simulation
             self.total_sim_time = sim_time[-1]
-            print(sim_time[0])
+
             self.time_ratio = self.computation_time/self.total_sim_time
             print(f"  Time ratio: {self.time_ratio} \n")
 
@@ -204,50 +204,47 @@ class PostProcessing:
 
        
 if __name__ == "__main__":
-    for dir in DIRECTORY_NAMES:
-        print(f"BENCHMARK: {dir}")
+    dir = DIRECTORY_NAME
 
-        post_processing = PostProcessing(dir)
-        result_dir , file_names = post_processing.get_file_names(dir)
-        file_names = sorted(file_names, reverse=False)
-        #file_names = ["boxes_gz-physics-dartsim-plugin_collision1_complex1_dt0.001_modelCount1.csv"]
+    print(f"BENCHMARK: {dir}")    
+    post_processing = PostProcessing(dir)
+    result_dir , file_names = post_processing.get_file_names(dir)
+    file_names = sorted(file_names, reverse=False)
+    #file_names = ["boxes_gz-physics-dartsim-plugin_collision1_complex1_dt0.001_modelCount1.csv"]
 
-        for file in file_names:
-            print(f"TEST: {file}")
-            file_path = os.path.join(result_dir,file)
-            config, states = post_processing.read_file(file_path)
-
-            physic_engine = config[0,0]
-            dt = config[0,1]
-            complex = bool(config[0,2])
-            collision = bool(config[0,3])
-            modelCount = config[0,4]
-            computation_time = config[0,5]
-            log_multiple = bool(config[0,6])
-            class_name = config[0,7]
-            
-            print(f" Physics engines: {physic_engine} \n Timestep: {dt} \n Complex: {complex} \n Number of models: {modelCount}")
-            post_processing.set_test_parameters(physic_engine, dt, complex, collision, modelCount, computation_time, class_name)
-
-            if log_multiple:
-                no_of_models = modelCount
-            else:
-                no_of_models = 1 
-
-            states_per_model = int(len(states[:,0])/no_of_models)
-            states = states.reshape(no_of_models, states_per_model,-1)
-
-            for i in range(no_of_models):
-                print(f" => Model number: {i+1}")
-                model_states = states[i]
-                sim_time = model_states[:,0]
-                post_processing.get_analytical_sol(sim_time, i)
-                post_processing.cal_metrics(model_states)
-                post_processing.save_metrics()
+    for file in file_names:
+        print(f"TEST: {file}")
+        file_path = os.path.join(result_dir,file)
+        config, states = post_processing.read_file(file_path)
+        physic_engine = config[0,0]
+        dt = config[0,1]
+        complex = bool(config[0,2])
+        collision = bool(config[0,3])
+        modelCount = config[0,4]
+        computation_time = config[0,5]
+        log_multiple = bool(config[0,6])
+        class_name = config[0,7]
         
-        post_processing.csv_file.close()
+        print(f" Physics engines: {physic_engine} \n Timestep: {dt} \n Complex: {complex} \n Number of models: {modelCount}")
+        post_processing.set_test_parameters(physic_engine, dt, complex, collision, modelCount, computation_time, class_name)
+        if log_multiple:
+            no_of_models = modelCount
+        else:
+            no_of_models = 1 
+        states_per_model = int(len(states[:,0])/no_of_models)
+        states = states.reshape(no_of_models, states_per_model,-1)
+
+        for i in range(no_of_models):
+            print(f" => Model number: {i+1}")
+            model_states = states[i]
+            sim_time = model_states[:,0]
+            post_processing.get_analytical_sol(sim_time, i)
+            post_processing.cal_metrics(model_states)
+            post_processing.save_metrics()
         
-        # sorting the data based on model count
-        data = pd.read_csv(post_processing.metrics_path)
-        stort_model_count = data.sort_values(by='modelCount')
-        stort_model_count.to_csv(post_processing.metrics_path, index=False)
+    post_processing.csv_file.close()
+        
+    # sorting the data based on model count
+    data = pd.read_csv(post_processing.metrics_path)
+    stort_model_count = data.sort_values(by='modelCount')
+    stort_model_count.to_csv(post_processing.metrics_path, index=False)

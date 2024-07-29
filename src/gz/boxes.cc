@@ -135,13 +135,15 @@ void BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
  
     double simTime;
     
+    // to store all links
     std::vector<Link> links;
     links.reserve(_modelCount);
 
     // link per model
     uint64_t linkCount = 1; 
     bool addLink = true;
-
+    
+    // set up for gz server and checks
     testFixture.
     OnConfigure([&](const Entity &_entity,
         const std::shared_ptr<const sdf::Element> &_sdf,
@@ -254,6 +256,7 @@ void BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
     testFixture.Server()->Run(true, steps, false);
     wallTime.Stop();
 
+    // recording wall time taken by simualtion loop
     double elapsedTime = wallTime.ElapsedTime().count();
     log.recordComputationTime(elapsedTime);
     log.stop();

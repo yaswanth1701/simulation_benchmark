@@ -42,7 +42,6 @@ def plotEnginesDt(params, yname
                 , ayscale=1.1
                 , csvDict=boxes
                 , legend='best'
-                , skipDart= False
                 , xname='dt'
                 , xlabel='Time step (s)'
                 , ylabel='Error'
@@ -104,7 +103,6 @@ def plotEnginesDt(params, yname
 def plotEnginesTime(params, yname
                   , csvDict=boxes
                   , legend='best'
-                  , skipDart=False
                   , xname='timeRatio'
                   , xlabel='Time ratio (real / sim)'
                   , ylabel='Error'
@@ -130,7 +128,6 @@ def plotEnginesTime(params, yname
 def plotEnginesModelCount(params, yname
                   , csvDict=boxes
                   , legend='best'
-                  , skipDart=False
                   , xname='modelCount'
                   , xlabel='Model count'
                   , ylabel='Time ratio (real / sim)'
@@ -143,7 +140,6 @@ def plotEnginesModelCount(params, yname
     plotEnginesDt(params, yname
                   , csvDict=csvDict
                   , legend=legend
-                  , skipDart=skipDart
                   , xname=xname
                   , xlabel=xlabel
                   , ylabel=ylabel
@@ -158,7 +154,6 @@ def plot3TimeDt(params
                 , csvDict=boxes
                 , yname='linPositionErr_maxAbs'
                 , title=''
-                , skipDart=False
                 , xscale='linear'
                 , yscale='linear'
                 ):
@@ -232,17 +227,3 @@ def plotErrorTime(classname, title_prefix
                     , csvDict=csvDict, legend=legend, yscale=yscale)
     plotEnginesTime(p, yname='energyError_maxAbs', title=title_prefix + 'energy'
                     , csvDict=csvDict, legend=legend, yscale=yscale)
-
-# boxes_model_count = makeCsvDictOfArrays('test_results/BENCHMARK_boxes_model_count_TEST.csv')
-
-# csvDict = boxes_model_count
-# yname = 'timeRatio'
-# ylabel = 'Time ratio (real / sim)'
-# ylim = (-0.40000000000000036, 8.4000000000000004)
-
-# plotEnginesModelCount({'collision': 'True'}
-#                   , csvDict=csvDict
-#                   , yname=yname
-#                   , ylabel=ylabel
-#                   , title='Computational time with collision-checking'
-#                    )
