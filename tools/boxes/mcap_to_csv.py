@@ -7,7 +7,9 @@ from mcap_protobuf.decoder import DecoderFactory
 from mcap.reader import make_reader
 import csv
 
-DIRECTORY_NAME = sys.argv[1]
+TEST_RESULT_DIR = sys.argv[1]
+DIRECTORY_NAME = sys.argv[2]
+
 
 STATES_NAMES = ["sim_time",
                 "model_no",
@@ -32,7 +34,7 @@ CONFIGURATION  = ["physics_engine", "time_step", "complex",
 
 
 def get_file_names(result_folder):
-    result_dir = os.path.join("~", "simulation_benchmark","test_results", result_folder)
+    result_dir = os.path.join(TEST_RESULT_DIR, result_folder)
     result_dir = os.path.expanduser(result_dir)
     print(result_dir)
     mcap_dir = os.path.join(result_dir, "MCAP")

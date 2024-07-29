@@ -6,8 +6,8 @@ from gz.math7 import Quaterniond, Vector3d
 import matplotlib.pyplot as plt
 import csv
 
-print(sys.argv[0])
-DIRECTORY_NAME = sys.argv[1]
+TEST_RESULT_DIR = sys.argv[1]
+DIRECTORY_NAME = sys.argv[2]
 
 class PostProcessing:
        
@@ -24,7 +24,7 @@ class PostProcessing:
            self.sim_duration = 10
            
            metrics_filename = test_name + ".csv"
-           metrics_path = os.path.join("~", "simulation_benchmark", "test_results", metrics_filename)
+           metrics_path = os.path.join(TEST_RESULT_DIR, metrics_filename)
            self.metrics_path = os.path.expanduser(metrics_path)
 
            self.csv_file = open(self.metrics_path, mode='w', newline='')
@@ -45,7 +45,7 @@ class PostProcessing:
     
        def get_file_names(self, result_folder: str):
            '''Method to obtain the file names and file paths of benchmark result'''
-           result_dir = os.path.join("~", "simulation_benchmark", "test_results", result_folder, "CSV")
+           result_dir = os.path.join(TEST_RESULT_DIR, result_folder, "CSV")
            result_dir = os.path.expanduser(result_dir)
            file_names = os.listdir(result_dir) 
            return result_dir, file_names
@@ -210,7 +210,6 @@ if __name__ == "__main__":
     post_processing = PostProcessing(dir)
     result_dir , file_names = post_processing.get_file_names(dir)
     file_names = sorted(file_names, reverse=False)
-    #file_names = ["boxes_gz-physics-dartsim-plugin_collision1_complex1_dt0.001_modelCount1.csv"]
 
     for file in file_names:
         print(f"TEST: {file}")
