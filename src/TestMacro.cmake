@@ -49,12 +49,10 @@ macro (gz_build_tests)
       TIMEOUT 1000
     )
     add_test(NAME mcap2csv_${BINARY_NAME}
-      COMMAND python3 ${PROJECT_SOURCE_DIR}/tools/boxes/mcap_to_csv.py 
-      ${PROJECT_SOURCE_DIR}/test_results ${BINARY_NAME}
+             COMMAND python3 ${PROJECT_SOURCE_DIR}/tools/boxes/mcap_to_csv.py ${BINARY_NAME}
     )
     add_test(NAME post_processing_${BINARY_NAME} 
-             COMMAND python3 ${PROJECT_SOURCE_DIR}/post_processing/${TEST}_post_processing.py 
-             ${PROJECT_SOURCE_DIR}/test_results  ${BINARY_NAME}
+             COMMAND python3 ${PROJECT_SOURCE_DIR}/post_processing/${TEST}_post_processing.py ${BINARY_NAME}
     )
 
     install(TARGETS ${BINARY_NAME}

@@ -2,12 +2,13 @@ import sys
 import os 
 import pandas as pd
 import numpy as np
+import time
 from gz.math7 import Quaterniond, Vector3d
 import matplotlib.pyplot as plt
 import csv
 
-TEST_RESULT_DIR = sys.argv[1]
-DIRECTORY_NAME = sys.argv[2]
+SOURCE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DIRECTORY_NAME = sys.argv[1]
 
 class PostProcessing:
        
@@ -22,9 +23,9 @@ class PostProcessing:
            Izz = self.m/12.0 * (self.box_x**2 + self.box_y**2)
            self.I = np.diag([Ixx, Iyy, Izz])
            self.sim_duration = 10
-           
-           metrics_filename = test_name + ".csv"
-           metrics_path = os.path.join(TEST_RESULT_DIR, metrics_filename)
+           timestr = time.strftime("%Y%m%d-%H%M%S")
+           metrics_filename = test_name + "_" + timestr + ".csv"
+           metrics_path = os.path.join(SOURCE_DIR, "test_results", metrics_filename)
            self.metrics_path = os.path.expanduser(metrics_path)
 
            self.csv_file = open(self.metrics_path, mode='w', newline='')
@@ -45,7 +46,7 @@ class PostProcessing:
     
        def get_file_names(self, result_folder: str):
            '''Method to obtain the file names and file paths of benchmark result'''
-           result_dir = os.path.join(TEST_RESULT_DIR, result_folder, "CSV")
+           result_dir = os.path.join(SOURCE_DIR, "test_results", result_folder, "CSV")
            result_dir = os.path.expanduser(result_dir)
            file_names = os.listdir(result_dir) 
            return result_dir, file_names
@@ -107,15 +108,22 @@ class PostProcessing:
             E_a = np.zeros(self.N)
             L = np.zeros((self.N,3))
             for i in range(self.N):
+                # angular velocity in bpdy frame
+                omega_w = omega[i].tolist()
+                quat = rot[i].tolist()
+                quat = Quaterniond(quat[0], quat[1], quat[2], quat[3])
+                omega_b = quat.rotate_vector_reverse(Vector3d(omega_w[0], omega_w[1], omega_w[2]))
+                omega_b = np.array([omega_b[0], omega_b[1], omega_b[2]])
+
+                # translation energy + rotational energy + potential energy
                 tran_E = 0.5*self.m*v[i].dot(v[i])
-                rot_E = 0.5*omega[i].dot(self.I.dot(omega[i]))
+                rot_E = 0.5*omega_b.dot(self.I.dot(omega_b))
                 V = - self.m*self.gravity.dot(pos[i])
                 E[i] = tran_E + rot_E + V
 
                 # angular momentum in body frame 
-                l_b = self.I.dot(omega[i]).tolist()
-                quat = rot[i].tolist()
-                quat = Quaterniond(quat[0], quat[1], quat[2], quat[3])
+                l_b = self.I.dot(omega_b).tolist()
+
                 # angular momentum in world frame
                 l_vector =  Vector3d(l_b[0], l_b[1],l_b[2])
                 l_w = quat.rotate_vector(l_vector)

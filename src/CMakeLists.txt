@@ -6,8 +6,8 @@ protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${PROTO_FILES})
          
 
 set(BOXES_TEST_FILES
-   boxes_dt_TEST.cc
-   boxes_model_count_TEST.cc
+   boxes_dt.cc
+   boxes_model_count.cc
 )
 message(STATUS ${BENCHMARK_EXE_SRC})
 

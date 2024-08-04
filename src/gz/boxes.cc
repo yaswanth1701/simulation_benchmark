@@ -228,21 +228,20 @@ void BoxesTest::Boxes(const std::string &_physicsEngine, double _dt,
       for(int i = 0; i < links.size(); i++)
       {
        auto link = links[i];
+       // link pose in world frame
        auto pose = link.WorldInertialPose(_ecm); 
-  
+       
+       // linear velocity in world frame
        auto linearVelocity = link.WorldLinearVelocity(_ecm);
        // angular velocity in world frame
-       auto angularVelocity_w = link.WorldAngularVelocity(_ecm);
+       auto angularVelocity = link.WorldAngularVelocity(_ecm);
 
        ASSERT_TRUE(pose.has_value());
        ASSERT_TRUE(linearVelocity.has_value());
-       ASSERT_TRUE(angularVelocity_w.has_value());
-
-       // angular velocity in body frame
-       auto angularVelocity_b = pose.value().Rot().RotateVectorReverse(angularVelocity_w.value());
+       ASSERT_TRUE(angularVelocity.has_value());
        
        log.recordPose(i, pose.value());
-       log.recordTwist(i, linearVelocity.value(), angularVelocity_b);
+       log.recordTwist(i, linearVelocity.value(), angularVelocity.value());
       } 
     }).
     Finalize();
