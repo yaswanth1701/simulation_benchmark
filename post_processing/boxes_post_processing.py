@@ -108,7 +108,7 @@ class PostProcessing:
             E_a = np.zeros(self.N)
             L = np.zeros((self.N,3))
             for i in range(self.N):
-                # angular velocity in bpdy frame
+                # angular velocity in body frame
                 omega_w = omega[i].tolist()
                 quat = rot[i].tolist()
                 quat = Quaterniond(quat[0], quat[1], quat[2], quat[3])
