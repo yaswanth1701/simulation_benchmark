@@ -2,6 +2,8 @@
 Benchmark comparison for rigid-body dynamic simulators. This project is part of GSoC'24@OpenRobotics. 
 
 This project is an effort to create an open-source benchmarking suite for robotics physics engines/simulators (for example: gazebo, mujoco, and drake). 
+
+Gazebo Classic benchmark is available [here](https://github.com/scpeters/benchmark)
 - [X] [Boxes benchmark: Free-floating rigid bodies:](boxes_description.ipynb)
 
   <img src="img/boxes/boxesSimple.gif" width="395" height="240" />
