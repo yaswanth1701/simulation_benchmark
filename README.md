@@ -53,8 +53,8 @@ make test
 #### Benchmark components:
 - `Simulation` -> `mcap to csv log conversion` -> `post_processing` -> `result_plots`
 #### This suite offers the following features:
-- Logging ([mcap](https://github.com/foxglove/mcap) & csv formats)
-- Dynamics world generation at run-time (SDF format).
+- [Logging](include/log.hh) ([mcap](https://github.com/foxglove/mcap) & csv formats)
+- Dynamics world generation at run-time([`sdf.erb`](https://classic.gazebosim.org/tutorials?tut=model_structure&cat=build_robot#:~:text=SDF%20website.-,Model%20SDF.ERB,-Standard%20SDF%20file) format).
 - Simulator independent post-processing script.
 
 These features allow for a simulator-independent suite for benchmarking.
