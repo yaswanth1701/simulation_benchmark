@@ -23,7 +23,7 @@ sudo apt-get install python3-gz-math7
       
   **Installation**
   -  Follow the Gazebo Ionic source installation up to [here](https://gazebosim.org/docs/ionic/install_ubuntu_src/#:~:text=Use%20vcstool%20to%20automatically%20retrieve%20all%20the%20Gazebo%20libraries%20sources%20from%20their%20repositories%3A).
-  -  Edit `collection-ionic.yaml.
+  -  Edit `collection-ionic.yaml`.
   -  In `gz-sim version: main`, replace `main` with `scepters/set_model_state_prototype`.
    
   This is how it should look:
