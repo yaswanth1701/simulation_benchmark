@@ -9,11 +9,11 @@ Benchmark comparison for rigid-body dynamic simulators. This project is part of 
 - [ ] [Triball benchmark: Rigid bodies in contact:]()
 
 ## Steps to run benchmark:
-### Install dependencies:
+#### Install dependencies:
 ```bash
 pip install lz4 protobuf zstandard matplotlib numpy pandas
 ```
-- #### Currently implemented simulator:
+#### Install currently implemented simulator:
 - [X] Gazebo Ionic:
   
       
@@ -31,7 +31,7 @@ pip install lz4 protobuf zstandard matplotlib numpy pandas
   ```
   Follow rest of the installation tutorial.
 
-### Build and run tests:
+#### Build and run tests:
 
 ```bash 
 git clone https://github.com/yaswanth1701/simulation_benchmark.git -b gz-sim_dev
