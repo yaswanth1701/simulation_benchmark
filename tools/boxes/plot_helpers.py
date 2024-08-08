@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 mpl.rcParams.update({'font.size': 16})
 from csv_dictionary import *
 
-boxes = makeCsvDictOfArrays('test_results/BENCHMARK_boxes_dt_TEST.csv')
+boxes = makeCsvDictOfArrays('test_results/BENCHMARK_boxes_dt_20240804-135205.csv')
 
 color1 = [0, 0, 0.5]
 color2 = [0.5, 0.5, 0.5]
