@@ -15,6 +15,7 @@ Gazebo Classic benchmark is available [here](https://github.com/scpeters/benchma
 #### Install dependencies:
 ```bash
 pip install lz4 protobuf zstandard matplotlib numpy pandas
+sudo apt-get install python3-gz-math7
 ```
 #### Install currently implemented simulators:
 - [X] Gazebo Ionic:
