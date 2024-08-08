@@ -68,4 +68,6 @@ These features allow for a simulator-independent suite for benchmarking.
 ## Future works:
 - Benchmarks with the model having joints and multi-body dynamics.
 - Integration of Mujoco and Drake.
-  
+
+## Acknowledgment:
+We would highly appreciate developers of open-source simulators and the robotics community suggesting or implementing new benchmark ideas using this benchmarking suite and opening a pull request for it. If anyone comes across problems while running the benchmark, please inform them by opening an issue.
