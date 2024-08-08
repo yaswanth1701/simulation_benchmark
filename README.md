@@ -70,4 +70,4 @@ These features allow for a simulator-independent suite for benchmarking.
 - Integration of Mujoco and Drake.
 
 ## Acknowledgment:
-We would highly appreciate developers of open-source simulators and the robotics community suggesting or implementing new benchmark ideas using this benchmarking suite and opening a pull request for it. If anyone comes across problems while running the benchmark, please inform us by opening an issue.
+We would highly appreciate developers of open-source simulators and the robotics community suggesting or implementing new benchmarking ideas using this benchmarking suite and opening a pull request for it. If anyone comes across problems while running the benchmark, please inform us by opening an issue.
