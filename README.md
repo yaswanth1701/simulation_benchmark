@@ -3,8 +3,8 @@ Benchmark comparison for rigid-body dynamic simulators. This project is part of 
 
 - [X] [Boxes benchmark: Free-floating rigid bodies:](https://github.com/yaswanth1701/simulation_benchmark/blob/gz-sim_dev/boxes_description.ipynb)
 
-  <img src="img/boxes/boxesSimple.gif" width="450" height="250" />
-  <img src="img/boxes/boxesComplex.gif" width="450" height="250" />
+  <img src="img/boxes/boxesSimple.gif" width="400" height="250" />
+  <img src="img/boxes/boxesComplex.gif" width="400" height="250" />
   
 - [ ] [Triball benchmark: Rigid bodies in contact:]()
 
