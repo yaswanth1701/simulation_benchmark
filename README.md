@@ -2,7 +2,6 @@
 Benchmark comparison for rigid-body dynamic simulators. This project is part of GSoC'24@OpenRobotics. 
 
 This project is an effort to create an open-source benchmarking suite for robotics physics engines/simulators (for example: gazebo, mujoco, and drake). 
-
 - [X] [Boxes benchmark: Free-floating rigid bodies:](https://github.com/yaswanth1701/simulation_benchmark/blob/gz-sim_dev/boxes_description.ipynb)
 
   <img src="img/boxes/boxesSimple.gif" width="395" height="240" />
@@ -65,4 +64,8 @@ These features allow for a simulator-independent suite for benchmarking.
    - [X] [DART](https://github.com/dartsim/dart)
    - [ ] [Bullet](https://github.com/bulletphysics/bullet3)
    - [X] [Bullet-Featherstone](https://github.com/bulletphysics/bullet3)
+
+## Future works:
+- Benchmarks with the model having joints and multi-body dynamics.
+- Integration of Mujoco and Drake.
   
