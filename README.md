@@ -36,27 +36,33 @@ pip install lz4 protobuf zstandard matplotlib numpy pandas
 #### Build and run tests:
 
 ```bash 
-git clone https://github.com/yaswanth1701/simulation_benchmark.git -b gz-sim_dev
+git clone https://github.com/yaswanth1701/simulation_benchmark.git
 cd benchmark
 git submodule update --init --recursive
-mkdir build 
+mkdir build
+cd build
 cmake ..
 make 
 make test 
 ```
+#### Run Python notebooks for results
+- [boxes_results.ipynb](https://github.com/yaswanth1701/simulation_benchmark/blob/gz-sim_dev/boxes_results.ipynb)
+
 ## Benchmark suite feature description:
-This suite offers the following features:
-- Logging ([mcap](https://github.com/foxglove/mcap)/csv)
+#### Benchmark components:
+- `Simulation` -> `mcap to csv log conversion` -> `post_processing` -> `result_plots`
+#### This suite offers the following features:
+- Logging ([mcap](https://github.com/foxglove/mcap) & csv formats)
 - Dynamics world generation at run-time (SDF format).
 - Simulator independent post-processing script.
 
 These features allow for a simulator-independent suite for benchmarking.
 
-Currently implemented simulators/physics engines:
+#### Currently implemented simulators/physics engines:
 
--  [Gazebo Ionic benchmark:]()
+-  [Gazebo Ionic benchmark:](https://github.com/gazebosim/gz-ionic)
       
-   - [X] DART
-   - [ ] Bullet
-   - [X] Bullet-Featherstone
+   - [X] [DART](https://github.com/dartsim/dart)
+   - [ ] [Bullet](https://github.com/bulletphysics/bullet3)
+   - [X] [Bullet-Featherstone](https://github.com/bulletphysics/bullet3)
   
