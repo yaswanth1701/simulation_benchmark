@@ -1,6 +1,8 @@
 # simulation_benchmark
 Benchmark comparison for rigid-body dynamic simulators. This project is part of GSoC'24@OpenRobotics. 
 
+This project is an effort to create an open-source benchmarking suite for robotics physics engines/simulators (for example: gazebo, mujoco, and drake). 
+
 - [X] [Boxes benchmark: Free-floating rigid bodies:](https://github.com/yaswanth1701/simulation_benchmark/blob/gz-sim_dev/boxes_description.ipynb)
 
   <img src="img/boxes/boxesSimple.gif" width="395" height="240" />
@@ -13,7 +15,7 @@ Benchmark comparison for rigid-body dynamic simulators. This project is part of 
 ```bash
 pip install lz4 protobuf zstandard matplotlib numpy pandas
 ```
-#### Install currently implemented simulator:
+#### Install currently implemented simulators:
 - [X] Gazebo Ionic:
   
       
@@ -42,13 +44,7 @@ cmake ..
 make 
 make test 
 ```
-
-         
-  
-
-
-This project is an effort to create an open-source benchmarking suite for robotics physics engines/simulators (for example: gazebo, mujoco, and drake). 
-
+## Benchmark suite feature description:
 This suite offers the following features:
 - Logging ([mcap](https://github.com/foxglove/mcap)/csv)
 - Dynamics world generation at run-time (SDF format).
@@ -56,6 +52,11 @@ This suite offers the following features:
 
 These features allow for a simulator-independent suite for benchmarking.
 
-Currently implemented simulators/physics:
+Currently implemented simulators/physics engines:
 
-- 
+-  [Gazebo Ionic benchmark:]()
+      
+   - [X] DART
+   - [ ] Bullet
+   - [X] Bullet-Featherstone
+  
