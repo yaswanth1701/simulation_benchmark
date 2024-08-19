@@ -36,9 +36,7 @@ class PostProcessing:
                       "dt", "energyError_maxAbs", 	"engine", "isComplex", "linPositionErr_maxAbs",
                       "linVelocityErr_maxAbs", "modelCount", "simTime", "time", "timeRatio", "classname"]
            self.csv_writer.writerow(metrics)
-
-
-
+              
        def read_file(self,file_path: str):
            benchmark_config = pd.read_csv(file_path, nrows=1).to_numpy()
            states = pd.read_csv(file_path,skiprows=2).to_numpy()
@@ -208,9 +206,7 @@ class PostProcessing:
                                      self.p_maxabs_error, self.v_maxabs_error, self.no_of_models,
                                      self.total_sim_time, self.computation_time, self.time_ratio,
                                      self.class_name])
-    
-
-       
+              
 if __name__ == "__main__":
     dir = DIRECTORY_NAME
 
