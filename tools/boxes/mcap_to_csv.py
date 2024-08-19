@@ -7,8 +7,8 @@ sys.path.append(os.path.join(benchmark_dir, "mcap/python/mcap-protobuf-support")
 from mcap_protobuf.decoder import DecoderFactory
 from mcap.reader import make_reader
 import csv
-DIRECTORY_NAME = sys.argv[1]
 
+DIRECTORY_NAME = sys.argv[1]
 
 STATES_NAMES = ["sim_time",
                 "model_no",
@@ -30,8 +30,6 @@ CONFIGURATION  = ["physics_engine", "time_step", "complex",
                   "collisiion", "model_count","wall_time", 
                   "log_multiple", "classname"]
 
-
-
 def get_file_names(result_folder):
     result_dir = os.path.join(benchmark_dir, "test_results", result_folder)
     result_dir = os.path.expanduser(result_dir)
@@ -43,11 +41,8 @@ def get_file_names(result_folder):
         os.mkdir(csv_dir)
     return result_dir, file_names
 
-
 def MCAP_to_CSV(result_dir, file_name):
-
     csv_filename = file_name.split('.mcap')[0] + '.csv'
-    
     csv_filepath = os.path.join(result_dir,"CSV",csv_filename)
     mcap_filepath = os.path.join(result_dir,"MCAP",file_name)
 
@@ -55,7 +50,6 @@ def MCAP_to_CSV(result_dir, file_name):
     csv_writer = csv.writer(csv_file)
     csv_writer.writerow(CONFIGURATION)
     
-
     with open(mcap_filepath, "rb") as f:
         reader = make_reader(f, decoder_factories=[DecoderFactory()])
             
@@ -100,13 +94,10 @@ def MCAP_to_CSV(result_dir, file_name):
                             data.poses[t].position.z, data.poses[t].orientation.w, 
                             data.poses[t].orientation.x, data.poses[t].orientation.y,
                             data.poses[t].orientation.z]
-                    
+                  
                     csv_writer.writerow(row)
-                
         csv_file.close()
     
-            
-
 print("Started converting files from MCAP to CSV")
 
 result_dir,file_names = get_file_names(DIRECTORY_NAME)
@@ -114,4 +105,3 @@ for file_name in file_names:
     MCAP_to_CSV(result_dir, file_name)
 
 print("Successfully !! converted all files from MCAP to CSV")
-
