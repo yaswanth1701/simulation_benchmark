@@ -69,10 +69,13 @@ def MCAP_to_CSV(result_dir, file_name):
             wall_time = proto_msg.computation_time
             log_multiple = proto_msg.log_multiple
 
-            if complex:
-                class_name = "DtComplex"
+            if "model_count" in result_dir:
+                class_name = "Boxes"
             else:
-                class_name = "DtSimple"
+                if complex:
+                    class_name = "DtComplex"
+                else:
+                    class_name = "DtSimple"
 
             if "dartsim-plugin" in physics_engine:
                engine = "dart"
